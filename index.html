@@ -137,6 +137,13 @@ img{max-width:100%;display:block}
 .modal__info{padding:22px 26px 26px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
 .modal__info h3{font-size:20px;font-weight:600}
 .modal__info .sub{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:6px}
+.modal__open{
+  font-size:13px;letter-spacing:.04em;color:#fff;text-decoration:none;
+  border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:9px 18px;
+  transition:border-color .2s,background .2s;white-space:nowrap;
+}
+.modal__open:hover{border-color:#fff;background:rgba(255,255,255,.1)}
+.modal__open[hidden]{display:none}
 
 /* ============ 动画 ============ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
@@ -218,6 +225,7 @@ img{max-width:100%;display:block}
         <h3 id="modalTitle"></h3>
         <div class="sub" id="modalSub"></div>
       </div>
+      <a class="modal__open" id="modalOpen" href="#" target="_blank" rel="noopener" hidden>在 B 站观看 ↗</a>
     </div>
   </div>
 </div>
@@ -249,6 +257,13 @@ var DATA = {
   function pad(n){return n<10?"0"+n:""+n;}
   function updateCount(){document.getElementById("workCount").textContent="("+pad(WORKS.length)+" Projects)";}
   function plabel(p){return {youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"本地"}[p]||p;}
+
+  function pageUrl(w){
+    if(w.platform==="bilibili") return "https://www.bilibili.com/video/"+encodeURIComponent(w.videoId);
+    if(w.platform==="youtube") return "https://www.youtube.com/watch?v="+encodeURIComponent(w.videoId);
+    if(w.platform==="vimeo") return "https://vimeo.com/"+encodeURIComponent(w.videoId);
+    return "";
+  }
 
   function embed(w){
     if(w.platform==="youtube") return "https://www.youtube.com/embed/"+encodeURIComponent(w.videoId)+"?autoplay=1&rel=0&modestbranding=1";
@@ -356,6 +371,14 @@ var DATA = {
     }
     document.getElementById("modalTitle").textContent = w.title;
     document.getElementById("modalSub").textContent = [w.category,w.client,w.year].filter(Boolean).join(" · ");
+    var mo = document.getElementById("modalOpen");
+    if(w.platform==="local" || !pageUrl(w)){
+      mo.hidden = true;
+    }else{
+      mo.hidden = false;
+      mo.href = pageUrl(w);
+      mo.textContent = (w.platform==="bilibili" ? "在 B 站观看 ↗" : (w.platform==="youtube" ? "在 YouTube 观看 ↗" : "在新窗口观看 ↗"));
+    }
     modal.classList.add("is-open"); modal.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
   }
