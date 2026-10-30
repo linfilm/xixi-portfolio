@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta content="width=device-width, initial-scale=1.0" name="viewport">
-<title>林深 — 影像作品集</title>
-<meta content="导演 / 摄影 / 视觉设计 —— 影像作品集" name="description">
+<title>影像作品集</title>
+<meta content="影像作品集 —— 产品宣传 · 校园内容 · AIGC" name="description">
 <style>
 /* ============ 基础 ============ */
 :root{
@@ -122,24 +122,6 @@ img{max-width:100%;display:block}
 .empty{grid-column:1/-1;text-align:center;color:var(--sub);padding:60px 0}
 .empty strong{display:block;font-size:20px;color:var(--ink);font-weight:600;margin-bottom:8px}
 
-/* ============ 关于 ============ */
-.about{padding:110px 0 120px;border-top:1px solid var(--line)}
-.about__grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start}
-.about__lead{font-size:clamp(22px,2.6vw,30px);font-weight:600;letter-spacing:-.02em;line-height:1.35}
-.about__text{font-size:15px;color:var(--sub);margin-top:22px;max-width:460px}
-.about__meta{margin-top:34px;border-top:1px solid var(--line)}
-.about__meta div{display:flex;justify-content:space-between;gap:20px;padding:14px 0;border-bottom:1px solid var(--line);font-size:14px}
-.about__meta dt{color:var(--sub);letter-spacing:.04em}
-.about__meta dd{font-weight:600;text-align:right}
-.about__socials{display:flex;flex-wrap:wrap;gap:14px;margin-top:34px}
-.about__socials a{
-  font-size:13px;letter-spacing:.04em;color:var(--ink);
-  border:1px solid var(--line);border-radius:999px;padding:8px 16px;
-  transition:border-color .2s,color .2s,transform .2s;
-}
-.about__socials a:hover{border-color:var(--ink);transform:translateY(-1px)}
-.about__socials a.mail{border-color:var(--accent);color:var(--accent)}
-
 /* ============ 模态框 ============ */
 .modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
 .modal.is-open{display:flex}
@@ -176,7 +158,6 @@ img{max-width:100%;display:block}
   .grid{grid-template-columns:1fr;gap:44px}
   .sec-head{flex-direction:column;gap:8px;align-items:flex-start}
   .filters{gap:18px}
-  .about__grid{grid-template-columns:1fr;gap:34px}
   .modal{padding:16px}
   .modal__close{top:-40px}
 }
@@ -250,12 +231,8 @@ img{max-width:100%;display:block}
 ======================================================= */
 var DATA = {
   profile:{
-    name:"林深",
-    email:"linshen@stu.edu.cn",
     lead:"大三在读，喜欢用影像记录校园、产品，以及脑子里冒出来的奇想。",
-    text:"这是我的个人影像作品合集。从帮朋友做的产品宣传、运营的学校视频号，到课程里的习概研练作业、独立站介绍，以及最近沉迷的 AIGC 创作——都收在这里。点开任意作品即可播放。",
-    meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"],["作品","0 部"]],
-    socials:[["Bilibili","https://space.bilibili.com/"],["小红书","#"],["视频号","#"],["Instagram","https://instagram.com/"]]
+    meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"],["作品","0 部"]]
   },
   categories:["产品宣传","学校视频号","习概研练","独立站介绍","AIGC 视频","个人生活"],
   works:[
