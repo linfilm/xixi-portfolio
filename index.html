@@ -292,7 +292,7 @@ var DATA = {
 
   function embed(w){
     if(w.platform==="youtube") return "https://www.youtube.com/embed/"+encodeURIComponent(w.videoId)+"?autoplay=1&rel=0&modestbranding=1";
-    if(w.platform==="bilibili") return "https://player.bilibili.com/player.html?bvid="+encodeURIComponent(w.videoId)+"&page=1&high_quality=1&danmaku=0&autoplay=1";
+    if(w.platform==="bilibili") return "https://player.bilibili.com/player.html?bvid="+encodeURIComponent(w.videoId)+"&page=1&high_quality=1&danmaku=0&autoplay=1&hideCoverInfo=true";
     if(w.platform==="vimeo") return "https://player.vimeo.com/video/"+encodeURIComponent(w.videoId)+"?autoplay=1&title=0&byline=0&portrait=0";
     return "";
   }
