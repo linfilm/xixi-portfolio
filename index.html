@@ -253,7 +253,8 @@ var DATA = {
 
 (function(){
   var P = DATA.profile, WORKS = DATA.works, CATS = DATA.categories;
-  var current = CATS[0], currentOpenId = null;
+  var ALL_CAT = "全部";
+  var current = ALL_CAT, currentOpenId = null;
 
   function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   function pad(n){return n<10?"0"+n:""+n;}
@@ -289,7 +290,7 @@ var DATA = {
   /* ============ 筛选 ============ */
   var filtersEl = document.getElementById("filters");
   function renderFilters(){
-    filtersEl.innerHTML = CATS.map(function(c){
+    filtersEl.innerHTML = [ALL_CAT].concat(CATS).map(function(c){
       return '<button class="filter'+(c===current?" is-active":"")+'" data-cat="'+esc(c)+'">'+esc(c)+"</button>";
     }).join("");
     Array.prototype.forEach.call(filtersEl.querySelectorAll(".filter"),function(btn){
@@ -307,7 +308,7 @@ var DATA = {
       gridEl.innerHTML = '<div class="empty"><strong>作品即将上线</strong>更多影像作品正在整理中，敬请期待。</div>';
       return;
     }
-    var list = WORKS.filter(function(w){return w.category===current;});
+    var list = (current===ALL_CAT) ? WORKS : WORKS.filter(function(w){return w.category===current;});
     if(!list.length){gridEl.innerHTML='<p class="empty">该分类下暂无作品。</p>';return;}
     gridEl.innerHTML = list.map(function(w,i){
       var cover;
@@ -408,7 +409,7 @@ var DATA = {
   }
 
   /* ============ 初始化 ============ */
-  current = CATS[0];
+  current = ALL_CAT;
   renderFilters();
   updateCount();
   render();
