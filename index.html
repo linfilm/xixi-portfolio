@@ -193,7 +193,6 @@ img{max-width:100%;display:block}
   <a class="brand" href="#top">林深</a>
   <nav>
     <a href="#works">作品</a>
-    <a href="#about">关于</a>
   </nav>
 </header>
 
@@ -224,23 +223,6 @@ img{max-width:100%;display:block}
       </div>
       <div class="filters reveal" id="filters"></div>
       <div class="grid" id="grid"></div>
-    </div>
-  </section>
-
-  <!-- 关于 -->
-  <section class="about" id="about">
-    <div class="wrap">
-      <div class="sec-head reveal" style="margin-bottom:34px">
-        <h2><span class="idx">(02)</span>About</h2>
-      </div>
-      <div class="about__grid reveal">
-        <div>
-          <p class="about__lead" id="aboutLead"></p>
-          <p class="about__text" id="aboutText"></p>
-          <div class="about__socials" id="aboutSocials"></div>
-        </div>
-        <dl class="about__meta" id="aboutMeta"></dl>
-      </div>
     </div>
   </section>
 </main>
@@ -298,32 +280,20 @@ var DATA = {
     return "";
   }
 
-  /* ============ 资料区（关于） ============ */
+  /* ============ 资料区（头部） ============ */
   if(P){
-    document.getElementById("heroLead").textContent = P.lead || document.getElementById("heroLead").textContent;
-    document.getElementById("aboutLead").textContent = P.lead || "";
-    document.getElementById("aboutText").textContent = P.text || "";
+    var hl=document.getElementById("heroLead");
+    if(hl) hl.textContent = P.lead || hl.textContent;
     // 头部 meta
     if(Array.isArray(P.meta)){
       var school = (P.meta.find(function(m){return m[0]==="学校";})||[])[1];
       var major  = (P.meta.find(function(m){return m[0]==="专业";})||[])[1];
       var status = (P.meta.find(function(m){return m[0]==="身份";})||[])[1];
-      if(school) document.getElementById("metaSchool").textContent = school;
-      if(major)  document.getElementById("metaMajor").textContent  = major;
-      if(status) document.getElementById("metaStatus").textContent = status;
-      // 关于区 meta 列表
-      var metaHtml = P.meta.map(function(m){
-        return "<div><dt>"+esc(m[0])+"</dt><dd>"+esc(m[1])+"</dd></div>";
-      }).join("");
-      document.getElementById("aboutMeta").innerHTML = metaHtml;
+      var eS=document.getElementById("metaSchool"), eM=document.getElementById("metaMajor"), eT=document.getElementById("metaStatus");
+      if(school && eS) eS.textContent = school;
+      if(major  && eM) eM.textContent  = major;
+      if(status && eT) eT.textContent = status;
     }
-    // 社交 / 联系方式
-    var soc = document.getElementById("aboutSocials");
-    if(P.email){ var a=document.createElement("a"); a.className="mail"; a.href="mailto:"+P.email; a.textContent="✉ "+P.email; soc.appendChild(a); }
-    if(Array.isArray(P.socials)) P.socials.forEach(function(s){
-      if(!s || !s[1] || s[1]==="#") return;
-      var a=document.createElement("a"); a.href=s[1]; a.target="_blank"; a.rel="noopener"; a.textContent=s[0]; soc.appendChild(a);
-    });
   }
 
   /* ============ 筛选 ============ */
