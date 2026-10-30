@@ -32,7 +32,7 @@ img{max-width:100%;display:block}
 /* ============ 导航 ============ */
 .nav{
   position:fixed;top:0;left:0;right:0;z-index:60;
-  display:flex;align-items:center;justify-content:space-between;
+  display:flex;align-items:center;justify-content:flex-end;
   padding:20px var(--pad);
   transition:background .3s,border-color .3s;
 }
@@ -190,7 +190,6 @@ img{max-width:100%;display:block}
 
 <!-- 导航 -->
 <header class="nav" id="nav">
-  <a class="brand" href="#top">林深</a>
   <nav>
     <a href="#works">作品</a>
   </nav>
@@ -255,7 +254,7 @@ var DATA = {
     email:"linshen@stu.edu.cn",
     lead:"大三在读，喜欢用影像记录校园、产品，以及脑子里冒出来的奇想。",
     text:"这是我的个人影像作品合集。从帮朋友做的产品宣传、运营的学校视频号，到课程里的习概研练作业、独立站介绍，以及最近沉迷的 AIGC 创作——都收在这里。点开任意作品即可播放。",
-    meta:[["身份","大三在读 · 视觉/数字媒体"],["方向","产品宣传 · 校园内容 · AIGC"],["作品","0 部"]],
+    meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"],["作品","0 部"]],
     socials:[["Bilibili","https://space.bilibili.com/"],["小红书","#"],["视频号","#"],["Instagram","https://instagram.com/"]]
   },
   categories:["产品宣传","学校视频号","习概研练","独立站介绍","AIGC 视频","个人生活"],
