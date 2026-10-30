@@ -142,13 +142,7 @@ img{max-width:100%;display:block}
 .modal__info{padding:22px 26px 26px;display:flex;justify-content:space-between;align-items:flex-end;gap:20px;flex-wrap:wrap}
 .modal__info h3{font-size:20px;font-weight:600}
 .modal__info .sub{font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-top:6px}
-.modal__open{
-  font-size:13px;letter-spacing:.04em;color:#fff;text-decoration:none;
-  border:1px solid rgba(255,255,255,.28);border-radius:999px;padding:9px 18px;
-  transition:border-color .2s,background .2s;white-space:nowrap;
-}
-.modal__open:hover{border-color:#fff;background:rgba(255,255,255,.1)}
-.modal__open[hidden]{display:none}
+.modal__frame.is-portrait{aspect-ratio:auto;height:min(78vh,660px);width:auto;margin:0 auto}
 
 /* ============ 动画 ============ */
 @keyframes fadeUp{from{opacity:0;transform:translateY(26px)}to{opacity:1;transform:none}}
@@ -230,7 +224,6 @@ img{max-width:100%;display:block}
         <h3 id="modalTitle"></h3>
         <div class="sub" id="modalSub"></div>
       </div>
-      <a class="modal__open" id="modalOpen" href="#" target="_blank" rel="noopener" hidden>在 B 站观看 ↗</a>
     </div>
   </div>
 </div>
@@ -249,7 +242,7 @@ var DATA = {
   },
   categories:["产品宣传","学校视频号","习概研练","独立站介绍","AIGC 视频","个人生活"],
   works:[
-    { id:"1", title:"YUFEI 椅子", category:"产品宣传", platform:"bilibili", videoId:"BV1Knxz6pEQ2",
+    { id:"1", title:"YUFEI 椅子", category:"产品宣传", platform:"local", videoId:"videos/yufei-chair.mp4",
       cover:"cover-yufei.jpg" }
   ]
 };
@@ -261,13 +254,9 @@ var DATA = {
   function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   function pad(n){return n<10?"0"+n:""+n;}
   function updateCount(){document.getElementById("workCount").textContent="("+pad(WORKS.length)+" Projects)";}
-  function plabel(p){return {youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"本地"}[p]||p;}
-
-  function pageUrl(w){
-    if(w.platform==="bilibili") return "https://www.bilibili.com/video/"+encodeURIComponent(w.videoId);
-    if(w.platform==="youtube") return "https://www.youtube.com/watch?v="+encodeURIComponent(w.videoId);
-    if(w.platform==="vimeo") return "https://vimeo.com/"+encodeURIComponent(w.videoId);
-    return "";
+  function plabel(w){
+    if(w.label) return w.label;
+    return {youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video"}[w.platform]||w.platform;
   }
 
   function embed(w){
@@ -318,10 +307,10 @@ var DATA = {
     if(!list.length){gridEl.innerHTML='<p class="empty">该分类下暂无作品。</p>';return;}
     gridEl.innerHTML = list.map(function(w,i){
       var cover;
-      if(w.platform==="local"){
-        cover = '<video class="card__bg card__video" preload="metadata" muted playsinline src="'+esc(w.videoId)+'"></video>';
-      }else if(w.cover){
+      if(w.cover){
         cover = '<div class="card__bg" style="background-image:url(\''+esc(w.cover)+'\');background-size:cover;background-position:center"></div>';
+      }else if(w.platform==="local"){
+        cover = '<video class="card__bg card__video" preload="metadata" muted playsinline src="'+esc(w.videoId)+'"></video>';
       }else{
         cover = '<div class="card__bg" style="background:'+w.gradient+'"></div><span class="card__glyph">'+esc((w.title||"·").charAt(0))+'</span>';
       }
@@ -329,7 +318,7 @@ var DATA = {
         '<div class="card__cover">'+
           cover+
           '<span class="card__num">'+pad(i+1)+'</span>'+
-          '<span class="card__platform">'+plabel(w.platform)+'</span>'+
+          '<span class="card__platform">'+plabel(w)+'</span>'+
           '<span class="card__play"><i></i></span>'+
         '</div>'+
         '<div class="card__body">'+
@@ -366,30 +355,36 @@ var DATA = {
   var modal=document.getElementById("modal"), frame=document.getElementById("modalFrame");
   function openModal(w){
     currentOpenId = w.id;
+    frame.classList.remove("is-portrait");
+    frame.style.width = ""; frame.style.height = "";
     if(w.platform==="local"){
       var mv=document.createElement("video");
       mv.src=w.videoId; mv.controls=true; mv.autoplay=true; mv.playsInline=true;
+      mv.setAttribute("playsinline","");
+      mv.setAttribute("webkit-playsinline","");
       frame.appendChild(mv);
+      mv.addEventListener("loadedmetadata",function(){
+        if(mv.videoHeight > mv.videoWidth){
+          var h = Math.min(window.innerHeight*0.78, 660);
+          frame.classList.add("is-portrait");
+          frame.style.height = h+"px";
+          frame.style.width = Math.round(h * mv.videoWidth / mv.videoHeight)+"px";
+        }
+      });
       var pp=mv.play(); if(pp&&pp.catch) pp.catch(function(){});
     }else{
       frame.innerHTML = '<iframe src="'+embed(w)+'" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
     }
     document.getElementById("modalTitle").textContent = w.title;
     document.getElementById("modalSub").textContent = [w.category,w.client,w.year].filter(Boolean).join(" · ");
-    var mo = document.getElementById("modalOpen");
-    if(w.platform==="local" || !pageUrl(w)){
-      mo.hidden = true;
-    }else{
-      mo.hidden = false;
-      mo.href = pageUrl(w);
-      mo.textContent = (w.platform==="bilibili" ? "在 B 站观看 ↗" : (w.platform==="youtube" ? "在 YouTube 观看 ↗" : "在新窗口观看 ↗"));
-    }
     modal.classList.add("is-open"); modal.setAttribute("aria-hidden","false");
     document.body.style.overflow="hidden";
   }
   function closeModal(){
     modal.classList.remove("is-open"); modal.setAttribute("aria-hidden","true");
     document.body.style.overflow=""; frame.innerHTML=""; currentOpenId=null;
+    frame.classList.remove("is-portrait");
+    frame.style.width=""; frame.style.height="";
   }
   Array.prototype.forEach.call(modal.querySelectorAll("[data-close]"),function(el){el.addEventListener("click",closeModal);});
   document.addEventListener("keydown",function(e){if(e.key==="Escape")closeModal();});
