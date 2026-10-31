@@ -234,20 +234,31 @@ img{max-width:100%;display:block}
 
 <script>
 /* ================= 数据（改这里即可） =================
-   platform: youtube | bilibili | vimeo | local
+   platform: youtube | bilibili | vimeo | polyv | local
    videoId : youtube 填视频ID / bilibili 填BV号 / vimeo 填数字ID
-             local 填本地视频路径，如 "videos/我的作品.mp4"（文件与本页放在同一目录）
+             polyv 填保利威 vid / local 填本地视频路径，如 "videos/我的作品.mp4"
    cover   : 可选，作品封面图地址；不填则用设计化渐变封面
+   portrait: 竖屏视频填 true；ratio 为宽高比（默认 0.75 = 3:4）
 ======================================================= */
 var DATA = {
   profile:{
     lead:"喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。",
     meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"]]
   },
-  categories:["产品宣传","学校视频号","习概研练","独立站介绍","AIGC 视频","个人生活"],
+  categories:["产品宣传","学院视频号","AIGC创作","独立站"],
   works:[
     { id:"1", title:"YUFEI折叠椅", category:"产品宣传", platform:"polyv", videoId:"m393c21aea2f743bad8c31501b9b09e2_m",
-      cover:"cover-yufei.jpg" }
+      cover:"cover-yufei.jpg" },
+    { id:"2", title:"Lec双肩包", category:"产品宣传", platform:"polyv", videoId:"m393c21aea26dcd0552834e1233b5b9e_m",
+      cover:"cover-backpack.jpg" },
+    { id:"3", title:"社媒运营课程花絮", category:"学院视频号", platform:"polyv", videoId:"m393c21aead4148f99e3faec4df67b53_m",
+      cover:"cover-plv.jpg", portrait:true, ratio:0.75 },
+    { id:"4", title:"奶龙大战豆包", category:"AIGC创作", platform:"polyv", videoId:"m393c21aea29f974cae8d198097432dc_m",
+      cover:"cover-nailong.jpg" },
+    { id:"5", title:"墨西哥视频二维码", category:"独立站", platform:"polyv", videoId:"m393c21aeaed121efd9d68fb5a0eceea_m",
+      cover:"cover-stand.jpg" },
+    { id:"6", title:"视频二维码工作台", category:"独立站", platform:"polyv", videoId:"m393c21aeaed8bc3c8b74fd80a94ec69_m",
+      cover:"cover-workbench.jpg" }
   ]
 };
 
