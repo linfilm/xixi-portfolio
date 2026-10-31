@@ -245,38 +245,7 @@ var DATA = {
     meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"]]
   },
   categories:["产品宣传","学校视频号","习概研练","独立站介绍","AIGC 视频","个人生活"],
-  works:[
-    { id:"1", title:"YUFEI 椅子", category:"产品宣传", platform:"bilibili", videoId:"BV1SYxB6sEWb",
-      cover:"cover-yufei.jpg" },
-    { id:"2", title:"双肩包", category:"产品宣传", platform:"bilibili", videoId:"BV1bYxB6sE6T",
-      cover:"cover-backpack.jpg" },
-    { id:"3", title:"工坊班课程花絮", category:"学校视频号", platform:"bilibili", videoId:"BV18YxB6sEKx",
-      cover:"cover-workshop.jpg" },
-    { id:"4", title:"奶龙大战豆包", category:"AIGC 视频", platform:"bilibili", videoId:"BV18hxB6dELe",
-      cover:"cover-nailong.jpg" },
-    { id:"5", title:"寻迹三大", category:"习概研练", platform:"bilibili", videoId:"BV1eWxB6hEF8",
-      cover:"cover-xunji.jpg" },
-    { id:"6", title:"墨西哥视频二维码独立站", category:"独立站介绍", platform:"bilibili", videoId:"BV18hxB6dEbA",
-      cover:"cover-stand.jpg" },
-    { id:"7", title:"墨西哥视频二维码产品工作台", category:"独立站介绍", platform:"bilibili", videoId:"BV18hxB6dErZ",
-      cover:"cover-workbench.jpg" },
-    { id:"8", title:"个人生活 01", category:"个人生活", platform:"bilibili", videoId:"BV1a4xB6bEd5",
-      cover:"cover-life01.jpg" },
-    { id:"9", title:"个人生活 02", category:"个人生活", platform:"bilibili", videoId:"BV1a4xB6bEdK",
-      cover:"cover-life02.jpg" },
-    { id:"10", title:"个人生活 03", category:"个人生活", platform:"bilibili", videoId:"BV1Y4xB6bEA7",
-      cover:"cover-life03.jpg" },
-    { id:"11", title:"个人生活 04", category:"个人生活", platform:"bilibili", videoId:"BV1a4xB6bEfc",
-      cover:"cover-life04.jpg" },
-    { id:"12", title:"个人生活 05", category:"个人生活", platform:"bilibili", videoId:"BV1a4xB6bEiM",
-      cover:"cover-life05.jpg" },
-    { id:"13", title:"个人生活 06", category:"个人生活", platform:"bilibili", videoId:"BV1YxxB6FEaF",
-      cover:"cover-life06.jpg" },
-    { id:"14", title:"个人生活 07", category:"个人生活", platform:"bilibili", videoId:"BV1YxxB6FEnL",
-      cover:"cover-life07.jpg" },
-    { id:"15", title:"工坊班社媒运营课程花絮", category:"学校视频号", platform:"polyv", videoId:"m393c21aead4148f99e3faec4df67b53_m",
-      cover:"cover-plv.jpg", portrait:true, ratio:0.75 }
-  ]
+  works:[]
 };
 
 (function(){
@@ -286,7 +255,7 @@ var DATA = {
 
   function esc(s){return String(s==null?"":s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");}
   function pad(n){return n<10?"0"+n:""+n;}
-  function updateCount(){document.getElementById("workCount").textContent="("+pad(WORKS.length)+" Projects)";}
+  function updateCount(){document.getElementById("workCount").textContent = WORKS.length ? "("+pad(WORKS.length)+" Projects)" : "—";}
   function plabel(w){
     if(w.label) return w.label;
     return {youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video",polyv:"Polyv"}[w.platform]||w.platform;
@@ -318,6 +287,8 @@ var DATA = {
   /* ============ 筛选 ============ */
   var filtersEl = document.getElementById("filters");
   function renderFilters(){
+    if(!WORKS.length){ filtersEl.innerHTML=""; filtersEl.style.display="none"; return; }
+    filtersEl.style.display="";
     filtersEl.innerHTML = [ALL_CAT].concat(CATS).map(function(c){
       return '<button class="filter'+(c===current?" is-active":"")+'" data-cat="'+esc(c)+'">'+esc(c)+"</button>";
     }).join("");
