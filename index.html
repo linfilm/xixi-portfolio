@@ -114,6 +114,25 @@ img{max-width:100%;display:block}
 .filter:active{transform:scale(.97)}
 .filter.is-active{background:var(--ink);border-color:var(--ink);color:#fff;box-shadow:0 6px 18px rgba(0,0,0,.18)}
 
+/* 移动端滑动提示：仅当分类条横向溢出且未滑动过时出现，划过即收起 */
+.filter-hint{
+  display:none;align-items:center;justify-content:flex-end;gap:7px;
+  overflow:hidden;max-height:0;opacity:0;margin:0;
+  font-size:12px;color:var(--sub);letter-spacing:.02em;
+  transition:max-height .45s var(--ease),opacity .45s var(--ease),margin .45s var(--ease);
+}
+.filter-hint.is-visible{max-height:22px;opacity:1;margin:-30px 0 26px}
+.filter-hint__arrow{position:relative;width:15px;height:10px;animation:hintNudge 1.9s var(--ease) infinite}
+.filter-hint__arrow::before,.filter-hint__arrow::after{
+  content:"";position:absolute;top:50%;width:6px;height:6px;border-radius:1px;
+  border-top:1.4px solid currentColor;border-right:1.4px solid currentColor;
+  transform:translateY(-50%) rotate(45deg);
+}
+.filter-hint__arrow::before{left:0;opacity:.45}
+.filter-hint__arrow::after{left:5px}
+@keyframes hintNudge{0%,100%{transform:translateX(0);opacity:.6}50%{transform:translateX(4px);opacity:1}}
+@media(min-width:901px){.filter-hint{display:none!important}}
+
 .grid{display:grid;grid-template-columns:repeat(4,1fr);gap:44px 24px}
 .card{
   cursor:pointer;position:relative;border-radius:var(--r-card);
@@ -233,12 +252,25 @@ img{max-width:100%;display:block}
 @media(max-width:900px){
   .grid{grid-template-columns:repeat(2,1fr);gap:32px 16px}
   .filters{
-    flex-wrap:nowrap;overflow-x:auto;scrollbar-width:none;
+    flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
+    scrollbar-width:none;-ms-overflow-style:none;
+    -webkit-overflow-scrolling:touch;
+    overscroll-behavior-x:contain;
+    scroll-snap-type:x proximity;
+    scroll-padding-left:var(--pad);
     margin-left:calc(-1 * var(--pad));margin-right:calc(-1 * var(--pad));
-    padding:0 var(--pad) 4px;
+    padding:4px var(--pad) 10px;
+    cursor:grab;
+    /* 左右边缘渐隐：由 JS 按滚动位置更新，滑到头时对应一侧收起 */
+    --fade-a:0px;--fade-b:22px;
+    -webkit-mask-image:linear-gradient(90deg,transparent 0,#000 var(--fade-a),#000 calc(100% - var(--fade-b)),transparent 100%);
+    mask-image:linear-gradient(90deg,transparent 0,#000 var(--fade-a),#000 calc(100% - var(--fade-b)),transparent 100%);
   }
-  .filters::-webkit-scrollbar{display:none}
-  .filter{flex:0 0 auto}
+  .filters::-webkit-scrollbar{display:none;width:0;height:0}
+  .filters.is-dragging{cursor:grabbing;scroll-snap-type:none;scroll-behavior:auto}
+  .filters.is-dragging .filter{pointer-events:none}
+  .filter{flex:0 0 auto;scroll-snap-align:start;min-height:40px;padding:10px 17px}
+  .filter-hint{display:flex}
   .hero__foot{flex-direction:column;align-items:flex-start;gap:14px}
   .works{padding:80px 0 96px}
 }
@@ -310,6 +342,10 @@ img{max-width:100%;display:block}
         <span class="count" id="workCount">—</span>
       </div>
       <div class="filters" id="filters"></div>
+      <div class="filter-hint" id="filterHint" aria-hidden="true">
+        <span>向右滑动，还有更多分类</span>
+        <span class="filter-hint__arrow"></span>
+      </div>
       <div class="grid" id="grid"></div>
     </div>
   </section>
@@ -416,6 +452,105 @@ var DATA = {
 
   /* ============ 筛选 ============ */
   var filtersEl = document.getElementById("filters");
+
+  /* ---- 移动端：分类条横向滑动 ---- */
+  function filterOverflow(){
+    return filtersEl.scrollWidth - filtersEl.clientWidth;
+  }
+  /* 边缘渐隐：滑到起点/终点时对应一侧收起，避免「没内容了还在淡出」 */
+  function paintFilterFade(){
+    var max = filterOverflow();
+    if(max <= 4){ filtersEl.style.setProperty("--fade-a","0px"); filtersEl.style.setProperty("--fade-b","0px"); return; }
+    filtersEl.style.setProperty("--fade-a", filtersEl.scrollLeft > 4 ? "22px" : "0px");
+    filtersEl.style.setProperty("--fade-b", filtersEl.scrollLeft < max - 4 ? "22px" : "0px");
+  }
+  /* 滑动提示：分类条真的溢出、并且用户还没滑过时才出现；划过一次就不再打扰 */
+  var hintEl = document.getElementById("filterHint");
+  var hintTimer = null, hintDismissed = false;
+  function dismissFilterHint(){
+    if(hintDismissed) return;
+    hintDismissed = true;
+    clearTimeout(hintTimer);
+    if(hintEl) hintEl.classList.remove("is-visible");
+  }
+  function syncFilterHint(){
+    if(!hintEl) return;
+    var show = !hintDismissed &&
+               filtersEl.style.display !== "none" &&
+               filterOverflow() > 12 &&
+               filtersEl.scrollLeft <= 12;
+    if(!show){ hintEl.classList.remove("is-visible"); return; }
+    hintEl.classList.add("is-visible");
+    clearTimeout(hintTimer);
+    hintTimer = setTimeout(dismissFilterHint, 9000);
+  }
+  filtersEl.addEventListener("scroll",function(){
+    if(filtersEl.scrollLeft > 12) dismissFilterHint();
+  },{passive:true});
+
+  /* 把选中项滑到可视区中间（不居中页面，只管横向） */  function revealActiveChip(smooth){
+    var act = filtersEl.querySelector(".filter.is-active");
+    if(!act || filterOverflow() <= 4) return;
+    var fr = filtersEl.getBoundingClientRect(), ar = act.getBoundingClientRect();
+    var target = filtersEl.scrollLeft + (ar.left - fr.left) - (filtersEl.clientWidth - ar.width)/2;
+    target = Math.max(0, Math.min(target, filterOverflow()));
+    if(Math.abs(target - filtersEl.scrollLeft) < 2) return;
+    if(smooth && filtersEl.scrollTo){
+      filtersEl.scrollTo({left:target, behavior:"smooth"});
+    }else{
+      filtersEl.scrollLeft = target;
+    }
+  }
+  /* 鼠标拖拽（触摸端交给系统原生惯性滚动，不接管） */
+  (function enableFilterDrag(){
+    var down=false, startX=0, startLeft=0, moved=false, pid=null, suppress=false;
+    filtersEl.addEventListener("pointerdown",function(e){
+      if(e.pointerType === "touch" || e.button !== 0) return;
+      down=true; moved=false; startX=e.clientX; startLeft=filtersEl.scrollLeft; pid=e.pointerId;
+    });
+    filtersEl.addEventListener("pointermove",function(e){
+      if(!down) return;
+      var dx = e.clientX - startX;
+      if(!moved && Math.abs(dx) > 6){
+        moved=true;
+        filtersEl.classList.add("is-dragging");
+        if(filtersEl.setPointerCapture && pid !== null){ try{ filtersEl.setPointerCapture(pid); }catch(err){} }
+      }
+      if(!moved) return;
+      e.preventDefault();
+      filtersEl.scrollLeft = startLeft - dx;
+    },{passive:false});
+    function stop(){
+      if(!down) return;
+      down=false;
+      filtersEl.classList.remove("is-dragging");
+      if(moved){ suppress=true; setTimeout(function(){ suppress=false; },260); }
+      moved=false; pid=null;
+    }
+    filtersEl.addEventListener("pointerup",stop);
+    filtersEl.addEventListener("pointercancel",stop);
+    window.addEventListener("pointerup",function(){ if(down) stop(); });
+    /* 拖拽结束后不要误触发分类切换 */
+    filtersEl.addEventListener("click",function(e){
+      if(suppress){ e.preventDefault(); e.stopPropagation(); }
+    },true);
+    /* 键盘 Tab 到某个分类时，把它带进可视区 */
+    filtersEl.addEventListener("focusin",function(e){
+      var t=e.target;
+      if(!t || !t.classList || !t.classList.contains("filter")) return;
+      var fr=filtersEl.getBoundingClientRect(), ar=t.getBoundingClientRect();
+      if(ar.left < fr.left + 8 || ar.right > fr.right - 8){
+        filtersEl.scrollLeft += (ar.left - fr.left) - 16;
+      }
+    });
+    filtersEl.addEventListener("scroll",paintFilterFade,{passive:true});
+  })();
+  var fadeRaf=null;
+  window.addEventListener("resize",function(){
+    if(fadeRaf) cancelAnimationFrame(fadeRaf);
+    fadeRaf = requestAnimationFrame(function(){ paintFilterFade(); syncFilterHint(); });
+  });
+
   /* 只列出真正有作品的分类：先按 categories 的顺序，再补上数据里出现但未登记的分类 */
   function activeCats(){
     var seen={}, out=[];
@@ -433,15 +568,18 @@ var DATA = {
     if(cats.length < 2){ filtersEl.innerHTML=""; filtersEl.style.display="none"; return; }
     filtersEl.style.display="";
     if(cats.indexOf(current) === -1) current = ALL_CAT;
+    var prevScroll = filtersEl.scrollLeft;
     filtersEl.innerHTML = [ALL_CAT].concat(cats).map(function(c){
       return '<button class="filter'+(c===current?" is-active":"")+'" data-cat="'+esc(c)+'">'+esc(c)+"</button>";
     }).join("");
+    filtersEl.scrollLeft = prevScroll;
     Array.prototype.forEach.call(filtersEl.querySelectorAll(".filter"),function(btn){
       btn.addEventListener("click",function(){
         current = btn.getAttribute("data-cat");
         renderFilters(); render();
       });
     });
+    requestAnimationFrame(function(){ paintFilterFade(); revealActiveChip(true); syncFilterHint(); });
   }
 
   /* ============ 网格 ============ */
