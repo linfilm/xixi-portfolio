@@ -245,7 +245,10 @@ var DATA = {
     meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"]]
   },
   categories:["产品宣传","学校视频号","习概研练","独立站介绍","AIGC 视频","个人生活"],
-  works:[]
+  works:[
+    { id:"1", title:"YUFEI折叠椅", category:"产品宣传", platform:"polyv", videoId:"m393c21aea2f743bad8c31501b9b09e2_m",
+      cover:"cover-yufei.jpg" }
+  ]
 };
 
 (function(){
@@ -286,10 +289,24 @@ var DATA = {
 
   /* ============ 筛选 ============ */
   var filtersEl = document.getElementById("filters");
+  /* 只列出真正有作品的分类：先按 categories 的顺序，再补上数据里出现但未登记的分类 */
+  function activeCats(){
+    var seen={}, out=[];
+    CATS.forEach(function(c){
+      if(WORKS.some(function(w){return w.category===c;}) && !seen[c]){ seen[c]=1; out.push(c); }
+    });
+    WORKS.forEach(function(w){
+      if(w.category && !seen[w.category]){ seen[w.category]=1; out.push(w.category); }
+    });
+    return out;
+  }
   function renderFilters(){
     if(!WORKS.length){ filtersEl.innerHTML=""; filtersEl.style.display="none"; return; }
+    var cats = activeCats();
+    if(cats.length < 2){ filtersEl.innerHTML=""; filtersEl.style.display="none"; return; }
     filtersEl.style.display="";
-    filtersEl.innerHTML = [ALL_CAT].concat(CATS).map(function(c){
+    if(cats.indexOf(current) === -1) current = ALL_CAT;
+    filtersEl.innerHTML = [ALL_CAT].concat(cats).map(function(c){
       return '<button class="filter'+(c===current?" is-active":"")+'" data-cat="'+esc(c)+'">'+esc(c)+"</button>";
     }).join("");
     Array.prototype.forEach.call(filtersEl.querySelectorAll(".filter"),function(btn){
