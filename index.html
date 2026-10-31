@@ -68,29 +68,9 @@ img{max-width:100%;display:block}
 
 /* ============ Hero ============ */
 .hero{
-  position:relative;
   min-height:100svh;max-width:var(--maxw);margin:0 auto;
   padding:calc(var(--nav-h) + 72px) var(--pad) 44px;
   display:flex;flex-direction:column;justify-content:space-between;
-}
-/* WebGPU 碎片背景：整屏通栏，居中裁切在 hero 之外不受 1340px 限制 */
-.hero__bg{
-  position:absolute;top:0;bottom:0;left:50%;width:100vw;
-  transform:translateX(-50%);z-index:0;pointer-events:none;
-  opacity:0;transition:opacity 1.4s var(--ease);
-  background:
-    radial-gradient(108% 74% at 86% 2%, rgba(226,69,43,.055), transparent 56%),
-    radial-gradient(86% 66% at 6% 98%, rgba(29,29,31,.045), transparent 60%);
-}
-.hero__bg.is-on{opacity:1}
-.hero__bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
-.hero > .hero__meta,.hero > .hero__title,.hero > .hero__foot{position:relative;z-index:1}
-@media(max-width:760px){
-  .hero__bg{
-    background:
-      radial-gradient(120% 46% at 82% -4%, rgba(226,69,43,.04), transparent 60%),
-      radial-gradient(90% 40% at 4% 100%, rgba(29,29,31,.035), transparent 62%);
-  }
 }
 .hero__meta{
   display:flex;gap:12px;flex-wrap:wrap;
@@ -99,13 +79,43 @@ img{max-width:100%;display:block}
 }
 .hero__meta span{display:flex;align-items:center;gap:12px}
 .hero__meta span:not(:first-child)::before{content:"";width:3px;height:3px;border-radius:50%;background:#c7c7cc}
+.hero__center{margin:auto 0}
 .hero__title{
   font-size:clamp(62px,13.5vw,188px);
   line-height:.94;letter-spacing:-.04em;font-weight:700;
-  padding:28px 0;margin:auto 0;
+  padding:28px 0;margin:0;
 }
 .hero__title em{font-style:normal;display:block;animation:fadeUp .9s var(--ease) .12s both}
 .hero__title span{display:block;font-weight:300;color:#c7c7cc;letter-spacing:-.03em;animation:fadeUp .9s var(--ease) .22s both}
+
+/* 姓名 + 简历入口 */
+.hero__id{
+  display:flex;flex-direction:column;align-items:flex-start;gap:20px;
+  padding-top:26px;animation:fadeUp .9s var(--ease) .28s both;
+}
+.hero__id-name{display:flex;align-items:baseline;font-size:clamp(16px,1.5vw,19px);color:var(--sub-2)}
+.hero__id-name b{font-weight:600;color:var(--ink);letter-spacing:.1em}
+.hero__id-name .en{font-weight:400;color:var(--sub-2);letter-spacing:.1em}
+.hero__id-name .dash{color:#c7c7cc;letter-spacing:0;margin:0 .1em;font-weight:400}
+.hero__resume{
+  display:inline-flex;align-items:center;gap:9px;
+  height:42px;padding:0 18px;border-radius:999px;
+  background:var(--surface);border:1px solid rgba(0,0,0,.1);
+  font-size:14px;font-weight:500;color:var(--ink);letter-spacing:-.01em;
+  box-shadow:var(--shadow-1);-webkit-tap-highlight-color:transparent;
+  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),
+             box-shadow .3s var(--ease),transform .4s var(--spring);
+}
+.hero__resume:hover{background:var(--ink);border-color:var(--ink);color:#fff;transform:translateY(-1px);box-shadow:var(--shadow-2)}
+.hero__resume:active{transform:scale(.98)}
+.hero__resume .tag{
+  font-size:10px;font-weight:600;letter-spacing:.06em;
+  padding:2px 5px;border-radius:4px;background:rgba(0,0,0,.06);color:var(--sub);
+  transition:background .3s var(--ease),color .3s var(--ease);
+}
+.hero__resume:hover .tag{background:rgba(255,255,255,.16);color:#fff}
+.hero__resume .arrow{font-size:13px;transition:transform .4s var(--spring)}
+.hero__resume:hover .arrow{transform:translate(2px,-2px)}
 .hero__foot{
   display:flex;justify-content:space-between;align-items:flex-end;gap:32px;
   border-top:.5px solid var(--line);padding-top:28px;
@@ -303,6 +313,8 @@ img{max-width:100%;display:block}
   .hero__meta span{gap:0}
   .hero__meta span:not(:first-child)::before{display:none}
   .hero__title{padding:16px 0}
+  .hero__id{gap:15px;padding-top:10px}
+  .hero__resume{height:38px;padding:0 15px;font-size:13px}
   .hero__foot p{font-size:15.5px}
   .sec-head{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:28px}
   .modal{padding:16px}
@@ -338,16 +350,27 @@ img{max-width:100%;display:block}
 
 <!-- Hero -->
 <section class="hero" id="top">
-  <div class="hero__bg" id="heroBg" aria-hidden="true"></div>
   <div class="hero__meta">
     <span id="metaSchool">广东轻工职业技术大学</span>
     <span id="metaMajor">软件技术 / AI 新媒体工坊班</span>
     <span id="metaStatus">大三在读</span>
   </div>
-  <h1 class="hero__title">
-    <em>我的</em>
-    <span>作品集</span>
-  </h1>
+  <div class="hero__center">
+    <h1 class="hero__title">
+      <em>我的</em>
+      <span>作品集</span>
+    </h1>
+    <div class="hero__id">
+      <p class="hero__id-name">
+        <span class="dash" aria-hidden="true">——</span><b>林亿翰</b><span class="en">/ Xixi</span><span class="dash" aria-hidden="true">——</span>
+      </p>
+      <a class="hero__resume" href="resume-linyihan.pdf" target="_blank" rel="noopener" type="application/pdf">
+        <span>查看个人简历</span>
+        <span class="tag">PDF</span>
+        <span class="arrow" aria-hidden="true">↗</span>
+      </a>
+    </div>
+  </div>
   <div class="hero__foot">
     <p id="heroLead">喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。</p>
     <span class="scroll">Scroll</span>
@@ -780,61 +803,6 @@ var DATA = {
     },1200);
   }else{
     Array.prototype.forEach.call(document.querySelectorAll(".reveal"),function(el){el.classList.add("in");});
-  }
-})();
-</script>
-
-<script type="module">
-/* ============ Hero 背景：AeroShards（WebGPU） ============
-   装饰性背景，任何时候失败都不影响页面：容器自带一层很淡的暖色渐变，
-   只有 WebGPU 可用时才异步加载着色器模块并把画布淡入。
-   模块单独成文件，静态站不需要构建，但必须通过 http(s) 访问（file:// 下会因
-   CORS 拒绝加载 module，此时自动退回渐变）。 */
-(function () {
-  var host = document.getElementById("heroBg");
-  if (!host) return;
-  var settle = function () { host.classList.add("is-on"); };
-
-  var off = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var saveData = navigator.connection && navigator.connection.saveData;
-  if (off || saveData || !("gpu" in navigator)) { settle(); return; }
-
-  var start = function () {
-    import("./hero/aero-shards.js")
-      .then(function (mod) {
-        var narrow = window.matchMedia("(max-width: 760px)").matches;
-        host.dataset.engine = "webgpu";
-        mod.mountAeroShards(host, {
-          lightMode: true,
-          shardColor: "#6e6e73",
-          accentColor: "#e2452b",
-          backgroundColor: "transparent",
-          count: narrow ? 520 : 1100,
-          dpr: narrow ? 1.5 : 1.75,
-          speed: 0.8,
-          scale: 1,
-          depthOfField: 0.7,
-          mouseStrength: 0.5,
-          grain: 0.05,
-          vignette: 0,
-          markers: "plus",
-          intro: true,
-          onError: function () {
-            host.dataset.engine = "off";
-            settle();
-          }
-        });
-        settle();
-      })
-      .catch(function () { settle(); });
-  };
-
-  if ("requestIdleCallback" in window) {
-    requestIdleCallback(start, { timeout: 2200 });
-  } else if (document.readyState === "complete") {
-    setTimeout(start, 600);
-  } else {
-    window.addEventListener("load", function () { setTimeout(start, 600); }, { once: true });
   }
 })();
 </script>
