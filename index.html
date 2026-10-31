@@ -840,10 +840,7 @@ html.js .wcard.is-seen{opacity:1;translate:0 0;scale:1}
 }
 .modal__frame{position:relative;aspect-ratio:16/9;background:#000}
 .modal__frame iframe,.modal__frame video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-.modal__frame>#polyvHost{position:absolute;inset:0;width:100%;height:100%}
 .modal__frame.is-portrait{aspect-ratio:auto;height:min(78vh,660px);width:auto;margin:0 auto}
-.modal__wait{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;
-  color:rgba(255,255,255,.42);font-size:12.5px;letter-spacing:.1em}
 /* 本地 file:// 预览的兜底：封面 + 跳转，替代 CodaPan 的错误页 */
 .modal__fall{position:absolute;inset:0;display:block;text-decoration:none;overflow:hidden}
 .modal__fall-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
@@ -1415,7 +1412,7 @@ html.js .wcard.is-seen{opacity:1;translate:0 0;scale:1}
 })();
 
 /* ================= 数据（只改这里） =================
-   platform: polyv | codapan | youtube | bilibili | vimeo | local
+   platform: codapan | youtube | bilibili | vimeo | local
    cover   : 只写文件名，路径前缀统一由 MEDIA 拼（落地时改成 ""）
 ====================================================== */
 var MEDIA = "";
@@ -1435,7 +1432,7 @@ var DATA = {
     {id:"11", title:"view", category:"个人创作", platform:"codapan", videoId:"kOJXjTIOrKtT", cover:"cover-view2.jpg", portrait:true, ratio:0.5625},
     {id:"12", title:"basketball", category:"个人创作", platform:"codapan", videoId:"kNJQsarhpU1h", cover:"cover-bb01.jpg", portrait:true, ratio:0.5625},
     {id:"13", title:"basketball", category:"个人创作", platform:"codapan", videoId:"UZCMPHZFYgpc", cover:"cover-bb02.jpg", portrait:true, ratio:0.5625},
-    {id:"14", title:"game", category:"个人创作", platform:"polyv", videoId:"m393c21aead3b6222df575dc99c5a6f2_m", cover:"cover-game01.jpg"},
+    {id:"14", title:"game", category:"个人创作", platform:"codapan", videoId:"kdgLahkxOJPr", cover:"cover-game01.jpg"},
     {id:"15", title:"game", category:"个人创作", platform:"codapan", videoId:"nUCVQuLVeczS", cover:"cover-game02.jpg"}
   ]
 };
@@ -1460,7 +1457,7 @@ function esc(s){
 }
 function pad(n){ return n < 10 ? "0" + n : "" + n; }
 function plabel(w){
-  return {polyv:"Polyv",codapan:"CodaPan",youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video"}[w.platform] || w.platform;
+  return {codapan:"CodaPan",youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video"}[w.platform] || w.platform;
 }
 function countOf(c){ return DATA.works.filter(function(w){ return w.category === c; }).length; }
 function catsInUse(){
@@ -1782,22 +1779,7 @@ function observeReveals(){
 var modal = document.getElementById("modal");
 var frame = document.getElementById("modalFrame");
 var dialog = modal.querySelector(".modal__dialog");
-var lastFocus = null, pv = null, pvQueue = [], pvLoading = false;
-
-function loadPolyv(cb){
-  if(window.polyvPlayer){ if(cb) cb(); return; }
-  if(cb) pvQueue.push(cb);
-  if(pvLoading) return;
-  pvLoading = true;
-  var s = document.createElement("script");
-  s.src = "https://player.polyv.net/resp/vod-player/latest/player.js";
-  s.onload = function(){
-    pvLoading = false;
-    pvQueue.splice(0).forEach(function(f){ try{ f(); }catch(e){} });
-  };
-  s.onerror = function(){ pvLoading = false; };
-  document.head.appendChild(s);
-}
+var lastFocus = null;
 
 /* 竖屏片：按真实画幅算高度，放不下就先压宽再折回高度 */
 function sizePortrait(w){
@@ -1821,23 +1803,7 @@ function openModal(w){
 
   if(w.portrait) sizePortrait(w);
 
-  if(w.platform === "polyv"){
-    frame.innerHTML = '<div id="polyvHost"><span class="modal__wait">播放器加载中…</span></div>';
-    loadPolyv(function(){
-      try{
-        var host = document.getElementById("polyvHost");
-        if(host) host.innerHTML = "";
-        pv = window.polyvPlayer({
-          domainInfo:{player:"player.polyv.net"},
-          wrap:"#polyvHost",
-          vid:w.videoId,
-          width:"100%", height:"100%",
-          forceH5:true, playsafe:"",
-          flashvars:{autoplay:"1", df:"", p:"1", playsafe:""}
-        });
-      }catch(e){}
-    });
-  }else if(w.platform === "codapan"){
+  if(w.platform === "codapan"){
     /* CodaPan 官方嵌入：?embed=1 只留画面 + 一行署名，layout=full 输出完整控件；
        它的 m3u8 不带 CORS 头，没法用自己的 hls.js 播，所以走 iframe。
        官方 coda-embed.js 会按 16:9 同步 iframe 高度，竖屏片会被压成顶部一小块，
@@ -1881,8 +1847,6 @@ function closeModal(){
   modal.setAttribute("aria-hidden","true");
   document.body.style.overflow = "";
   frame.innerHTML = "";
-  try{ if(pv && pv.destroy) pv.destroy(); }catch(e){}
-  pv = null;
   frame.classList.remove("is-portrait");
   frame.style.width = ""; frame.style.height = "";
   dialog.style.width = "";
@@ -1902,9 +1866,6 @@ renderGrid();
 syncBar();
 syncRing();
 setTimeout(function(){ barEl.classList.toggle("is-on", worksEl.getBoundingClientRect().top <= 0); }, 60);
-
-/* 预取保利威播放器：点开时别再等 900KB */
-setTimeout(function(){ loadPolyv(); }, 1600);
 </script>
 </body>
 </html>
