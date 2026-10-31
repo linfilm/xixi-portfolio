@@ -68,9 +68,29 @@ img{max-width:100%;display:block}
 
 /* ============ Hero ============ */
 .hero{
+  position:relative;
   min-height:100svh;max-width:var(--maxw);margin:0 auto;
   padding:calc(var(--nav-h) + 72px) var(--pad) 44px;
   display:flex;flex-direction:column;justify-content:space-between;
+}
+/* WebGPU 碎片背景：整屏通栏，居中裁切在 hero 之外不受 1340px 限制 */
+.hero__bg{
+  position:absolute;top:0;bottom:0;left:50%;width:100vw;
+  transform:translateX(-50%);z-index:0;pointer-events:none;
+  opacity:0;transition:opacity 1.4s var(--ease);
+  background:
+    radial-gradient(108% 74% at 86% 2%, rgba(226,69,43,.055), transparent 56%),
+    radial-gradient(86% 66% at 6% 98%, rgba(29,29,31,.045), transparent 60%);
+}
+.hero__bg.is-on{opacity:1}
+.hero__bg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.hero > .hero__meta,.hero > .hero__title,.hero > .hero__foot{position:relative;z-index:1}
+@media(max-width:760px){
+  .hero__bg{
+    background:
+      radial-gradient(120% 46% at 82% -4%, rgba(226,69,43,.04), transparent 60%),
+      radial-gradient(90% 40% at 4% 100%, rgba(29,29,31,.035), transparent 62%);
+  }
 }
 .hero__meta{
   display:flex;gap:12px;flex-wrap:wrap;
@@ -318,6 +338,7 @@ img{max-width:100%;display:block}
 
 <!-- Hero -->
 <section class="hero" id="top">
+  <div class="hero__bg" id="heroBg" aria-hidden="true"></div>
   <div class="hero__meta">
     <span id="metaSchool">广东轻工职业技术大学</span>
     <span id="metaMajor">软件技术 / AI 新媒体工坊班</span>
@@ -759,6 +780,61 @@ var DATA = {
     },1200);
   }else{
     Array.prototype.forEach.call(document.querySelectorAll(".reveal"),function(el){el.classList.add("in");});
+  }
+})();
+</script>
+
+<script type="module">
+/* ============ Hero 背景：AeroShards（WebGPU） ============
+   装饰性背景，任何时候失败都不影响页面：容器自带一层很淡的暖色渐变，
+   只有 WebGPU 可用时才异步加载着色器模块并把画布淡入。
+   模块单独成文件，静态站不需要构建，但必须通过 http(s) 访问（file:// 下会因
+   CORS 拒绝加载 module，此时自动退回渐变）。 */
+(function () {
+  var host = document.getElementById("heroBg");
+  if (!host) return;
+  var settle = function () { host.classList.add("is-on"); };
+
+  var off = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  var saveData = navigator.connection && navigator.connection.saveData;
+  if (off || saveData || !("gpu" in navigator)) { settle(); return; }
+
+  var start = function () {
+    import("./hero/aero-shards.js")
+      .then(function (mod) {
+        var narrow = window.matchMedia("(max-width: 760px)").matches;
+        host.dataset.engine = "webgpu";
+        mod.mountAeroShards(host, {
+          lightMode: true,
+          shardColor: "#6e6e73",
+          accentColor: "#e2452b",
+          backgroundColor: "transparent",
+          count: narrow ? 520 : 1100,
+          dpr: narrow ? 1.5 : 1.75,
+          speed: 0.8,
+          scale: 1,
+          depthOfField: 0.7,
+          mouseStrength: 0.5,
+          grain: 0.05,
+          vignette: 0,
+          markers: "plus",
+          intro: true,
+          onError: function () {
+            host.dataset.engine = "off";
+            settle();
+          }
+        });
+        settle();
+      })
+      .catch(function () { settle(); });
+  };
+
+  if ("requestIdleCallback" in window) {
+    requestIdleCallback(start, { timeout: 2200 });
+  } else if (document.readyState === "complete") {
+    setTimeout(start, 600);
+  } else {
+    window.addEventListener("load", function () { setTimeout(start, 600); }, { once: true });
   }
 })();
 </script>
