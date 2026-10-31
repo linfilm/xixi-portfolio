@@ -1419,7 +1419,7 @@ var MEDIA = "";
 var DATA = {
   categories:["产品宣传","校园内容","AIGC创作","独立站","个人创作"],
   works:[
-    {id:"1", title:"YUFEI折叠椅", category:"产品宣传", platform:"codapan", videoId:"XKetXPFhBcxa", cover:"cover-yufei.jpg", portrait:true, ratio:0.5625},
+    {id:"1", title:"YUFEI折叠椅", category:"产品宣传", platform:"codapan", videoId:"XKetXPFhBcxa", cover:"cover-yufei.jpg", portrait:true, ratio:0.5625, pos:"50% 30%"},
     {id:"2", title:"Lec双肩包",   category:"产品宣传", platform:"codapan", videoId:"3xAVXOAXtiTO", cover:"cover-backpack.jpg"},
     {id:"3", title:"社媒运营课程花絮", category:"校园内容", platform:"codapan", videoId:"8P4ehKxNjW4p", cover:"cover-plv.jpg", portrait:true, ratio:0.75},
     {id:"4", title:"奶龙大战豆包", category:"AIGC创作", platform:"codapan", videoId:"SpZXzqawwqr8", cover:"cover-nailong.jpg"},
@@ -1430,14 +1430,17 @@ var DATA = {
     {id:"9", title:"plog", category:"个人创作", platform:"codapan", videoId:"R3czWvN42bRK", cover:"cover-plog02.jpg", portrait:true, ratio:0.75},
     {id:"10", title:"view", category:"个人创作", platform:"codapan", videoId:"qUSa5lYJ0jW8", cover:"cover-view.jpg", portrait:true, ratio:0.695},
     {id:"11", title:"view", category:"个人创作", platform:"codapan", videoId:"kOJXjTIOrKtT", cover:"cover-view2.jpg", portrait:true, ratio:0.5625},
-    {id:"12", title:"basketball", category:"个人创作", platform:"codapan", videoId:"kNJQsarhpU1h", cover:"cover-bb01.jpg", portrait:true, ratio:0.5625},
-    {id:"13", title:"basketball", category:"个人创作", platform:"codapan", videoId:"UZCMPHZFYgpc", cover:"cover-bb02.jpg", portrait:true, ratio:0.5625},
+    {id:"12", title:"basketball", category:"个人创作", platform:"codapan", videoId:"kNJQsarhpU1h", cover:"cover-bb01.jpg", portrait:true, ratio:0.5625, pos:"50% 34%"},
+    {id:"13", title:"basketball", category:"个人创作", platform:"codapan", videoId:"UZCMPHZFYgpc", cover:"cover-bb02.jpg", portrait:true, ratio:0.5625, pos:"50% 38%"},
     {id:"14", title:"game", category:"个人创作", platform:"codapan", videoId:"kdgLahkxOJPr", cover:"cover-game01.jpg"},
     {id:"15", title:"game", category:"个人创作", platform:"codapan", videoId:"nUCVQuLVeczS", cover:"cover-game02.jpg"}
   ]
 };
 
 var POS = {"校园内容":"50% 74%"};
+/* 环上的分类缩略图默认取该类第一支的封面；个别封面缩到 30px 后没有可辨识主体，
+   这里指定换成同类的另一张 */
+var THUMB = {"个人创作":"cover-view2.jpg"};
 var ALL = "全部";
 var CURRENT = ALL;
 
@@ -1471,6 +1474,7 @@ function catsInUse(){
   return out;
 }
 function coverOf(c){
+  if(THUMB[c]) return THUMB[c];
   var w = DATA.works.filter(function(x){ return x.category === c; })[0];
   return w ? w.cover : "";
 }
@@ -1645,7 +1649,8 @@ function renderGrid(){
   gridEl.innerHTML = list.map(function(w, i){
     return '<button class="wcard" type="button" data-id="' + esc(w.id) + '" style="--d:' + ((i % Math.max(1, cols)) * 60) + 'ms" aria-label="播放 ' + esc(w.title) + '">' +
       '<span class="wcard__cover">' +
-        '<img class="wcard__img" src="' + MEDIA + esc(w.cover || "") + '" alt="" loading="lazy" decoding="async">' +
+        '<img class="wcard__img" src="' + MEDIA + esc(w.cover || "") + '" alt="" loading="lazy" decoding="async"' +
+          (w.pos ? ' style="object-position:' + esc(w.pos) + '"' : '') + '>' +
         '<span class="wcard__num">' + pad(i + 1) + '</span>' +
         '<span class="wcard__tag">' + esc(plabel(w)) + '</span>' +
         '<span class="wcard__play"></span>' +
