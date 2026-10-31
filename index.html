@@ -67,66 +67,85 @@ img{max-width:100%;display:block}
 .nav nav a:hover{color:var(--ink)}
 
 /* ============ Hero ============ */
+/* 左：标题 + 姓名 + 一句说明 + 出处 + 简历；右：一件作品的剧照（占满整列，闭合右边空档） */
 .hero{
-  min-height:100svh;max-width:var(--maxw);margin:0 auto;
-  padding:calc(var(--nav-h) + 72px) var(--pad) 44px;
-  display:flex;flex-direction:column;justify-content:space-between;
+  max-width:var(--maxw);margin:0 auto;min-height:100svh;
+  padding:calc(var(--nav-h) + 56px) var(--pad) 48px;
+  display:flex;align-items:center;
 }
-.hero__meta{
-  display:flex;gap:12px;flex-wrap:wrap;
-  font-size:13px;color:var(--sub);
-  animation:fadeUp .8s var(--ease) .05s both;
+.hero__grid{
+  width:100%;display:grid;
+  grid-template-columns:minmax(0,1.38fr) minmax(0,1fr);
+  gap:clamp(28px,4.2vw,62px);align-items:center;
 }
-.hero__meta span{display:flex;align-items:center;gap:12px}
-.hero__meta span:not(:first-child)::before{content:"";width:3px;height:3px;border-radius:50%;background:#c7c7cc}
-.hero__center{margin:auto 0}
+.hero__copy{min-width:0;container-type:inline-size}
 .hero__title{
-  font-size:clamp(62px,13.5vw,188px);
-  line-height:.94;letter-spacing:-.04em;font-weight:700;
-  padding:28px 0;margin:0;
+  font-size:min(9.6vw,138px);
+  line-height:.92;letter-spacing:-.045em;font-weight:700;margin:0;
+  animation:fadeUp .9s var(--ease) .05s both;
 }
-.hero__title em{font-style:normal;display:block;animation:fadeUp .9s var(--ease) .12s both}
-.hero__title span{display:block;font-weight:300;color:#c7c7cc;letter-spacing:-.03em;animation:fadeUp .9s var(--ease) .22s both}
-
-/* 姓名 + 简历入口 */
+@supports (container-type:inline-size){
+  /* 标题随左栏宽度缩放，右边缘落在栏位上，不在半空停住 */
+  .hero__title{font-size:min(19.4cqw,142px)}
+}
 .hero__id{
-  display:flex;flex-direction:column;align-items:flex-start;gap:20px;
-  padding-top:26px;animation:fadeUp .9s var(--ease) .28s both;
+  display:flex;align-items:baseline;flex-wrap:wrap;
+  margin:26px 0 0;font-size:18px;
+  animation:fadeUp .9s var(--ease) .16s both;
 }
-.hero__id-name{display:flex;align-items:baseline;font-size:clamp(16px,1.5vw,19px);color:var(--sub-2)}
-.hero__id-name b{font-weight:600;color:var(--ink);letter-spacing:.1em}
-.hero__id-name .en{font-weight:400;color:var(--sub-2);letter-spacing:.1em}
-.hero__id-name .dash{color:#c7c7cc;letter-spacing:0;margin:0 .1em;font-weight:400}
+.hero__id b{font-weight:600;letter-spacing:.08em}
+.hero__id .en{color:var(--sub);margin-left:.4em;letter-spacing:.02em}
+.hero__id .dash{color:#c7c7cc;margin:0 .3em}
+.hero__lead{
+  margin:24px 0 0;max-width:25em;
+  font-size:clamp(18px,1.42vw,21px);line-height:1.6;letter-spacing:-.01em;
+  text-wrap:pretty;animation:fadeUp .9s var(--ease) .22s both;
+}
+.hero__cred{
+  margin:16px 0 0;font-size:14.5px;color:var(--sub);
+  display:flex;flex-wrap:wrap;row-gap:4px;
+  animation:fadeUp .9s var(--ease) .26s both;
+}
+.hero__cred span+span::before{content:"·";color:#b4b4b9;margin:0 10px}
 .hero__resume{
-  display:inline-flex;align-items:center;gap:9px;
-  height:42px;padding:0 18px;border-radius:999px;
-  background:var(--surface);border:1px solid rgba(0,0,0,.1);
-  font-size:14px;font-weight:500;color:var(--ink);letter-spacing:-.01em;
-  box-shadow:var(--shadow-1);-webkit-tap-highlight-color:transparent;
-  transition:background .3s var(--ease),color .3s var(--ease),border-color .3s var(--ease),
-             box-shadow .3s var(--ease),transform .4s var(--spring);
-}
-.hero__resume:hover{background:var(--ink);border-color:var(--ink);color:#fff;transform:translateY(-1px);box-shadow:var(--shadow-2)}
-.hero__resume:active{transform:scale(.98)}
-.hero__resume .tag{
-  font-size:10px;font-weight:600;letter-spacing:.06em;
-  padding:2px 5px;border-radius:4px;background:rgba(0,0,0,.06);color:var(--sub);
-  transition:background .3s var(--ease),color .3s var(--ease);
-}
-.hero__resume:hover .tag{background:rgba(255,255,255,.16);color:#fff}
-.hero__resume .arrow{font-size:13px;transition:transform .4s var(--spring)}
-.hero__resume:hover .arrow{transform:translate(2px,-2px)}
-.hero__foot{
-  display:flex;justify-content:space-between;align-items:flex-end;gap:32px;
-  border-top:.5px solid var(--line);padding-top:28px;
+  display:inline-flex;align-items:center;gap:10px;
+  margin-top:32px;height:46px;padding:0 22px;border-radius:999px;
+  background:var(--ink);color:#fff;border:0;cursor:pointer;
+  font-family:inherit;font-size:14.5px;font-weight:500;letter-spacing:-.01em;
+  -webkit-tap-highlight-color:transparent;
+  transition:background .3s var(--ease),transform .4s var(--spring);
   animation:fadeUp .9s var(--ease) .32s both;
 }
-.hero__foot p{max-width:480px;font-size:17px;color:var(--sub);letter-spacing:-.01em;text-wrap:pretty}
-.scroll{
-  font-size:13px;color:var(--sub-2);white-space:nowrap;
-  display:flex;align-items:center;gap:8px;
+.hero__resume:hover{background:#000;transform:translateY(-1px)}
+.hero__resume:active{transform:scale(.985)}
+.hero__resume .arrow{font-size:13px;transition:transform .4s var(--spring)}
+.hero__resume:hover .arrow{transform:translate(2px,-2px)}
+
+/* 作品剧照 */
+.hero__frame{
+  display:flex;flex-direction:column;gap:14px;width:100%;
+  margin:0;padding:0;border:0;background:none;
+  font-family:inherit;text-align:left;cursor:pointer;
+  -webkit-tap-highlight-color:transparent;
+  animation:fadeUp 1s var(--ease) .18s both;
 }
-.scroll::after{content:"↓";font-size:14px;animation:bob 1.9s ease-in-out infinite}
+.hero__frame-in{
+  display:block;width:100%;aspect-ratio:4/5;height:min(74svh,690px);
+  overflow:hidden;border-radius:var(--r-card);background:#0c0c0e;
+}
+.hero__frame-in img{
+  width:100%;height:100%;object-fit:cover;object-position:50% 48%;
+  /* 封面自带上下黑边：放大 1.18 把黑边推出可视区 */
+  transform:scale(1.18);
+  transition:transform .7s var(--ease);
+}
+.hero__frame:hover .hero__frame-in img{transform:scale(1.22)}
+.hero__cap{
+  display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;
+  font-size:13px;color:var(--sub);letter-spacing:0;
+}
+.hero__cap b{font-weight:500;color:var(--ink);font-size:14px}
+.hero__frame:focus-visible{outline-offset:6px;border-radius:var(--r-card)}
 
 /* ============ 作品 ============ */
 .works{padding:104px 0 120px;background:var(--surface)}
@@ -301,21 +320,22 @@ img{max-width:100%;display:block}
   .filters.is-dragging .filter{pointer-events:none}
   .filter{flex:0 0 auto;scroll-snap-align:start;min-height:40px;padding:10px 17px}
   .filter-hint{display:flex}
-  .hero__foot{flex-direction:column;align-items:flex-start;gap:14px}
+  .hero{min-height:auto;padding-top:calc(var(--nav-h) + 46px);padding-bottom:64px}
+  .hero__grid{grid-template-columns:1fr;gap:38px}
+  .hero__frame-in{height:auto;aspect-ratio:4/5;max-height:56svh}
   .works{padding:80px 0 96px}
 }
 @media(max-width:760px){
   .nav{height:48px}
   .nav nav{gap:18px}
   .nav nav a{font-size:13px}
-  .hero{padding-top:calc(var(--nav-h) + 56px);padding-bottom:32px}
-  .hero__meta{flex-direction:column;align-items:flex-start;gap:6px;font-size:12px}
-  .hero__meta span{gap:0}
-  .hero__meta span:not(:first-child)::before{display:none}
-  .hero__title{padding:16px 0}
-  .hero__id{gap:15px;padding-top:10px}
-  .hero__resume{height:38px;padding:0 15px;font-size:13px}
-  .hero__foot p{font-size:15.5px}
+  .hero{padding-top:calc(var(--nav-h) + 40px);padding-bottom:52px}
+  .hero__id{margin-top:20px;font-size:16.5px}
+  .hero__lead{margin-top:18px}
+  .hero__cred{margin-top:14px;font-size:13.5px;flex-direction:column;row-gap:2px}
+  .hero__cred span+span::before{display:none}
+  .hero__resume{height:44px;padding:0 20px;font-size:14px;margin-top:26px}
+  .hero__frame{gap:12px}
   .sec-head{flex-direction:column;align-items:flex-start;gap:6px;margin-bottom:28px}
   .modal{padding:16px}
   .modal__info{padding:16px 18px 18px}
@@ -350,30 +370,34 @@ img{max-width:100%;display:block}
 
 <!-- Hero -->
 <section class="hero" id="top">
-  <div class="hero__meta">
-    <span id="metaSchool">广东轻工职业技术大学</span>
-    <span id="metaMajor">软件技术 / AI 新媒体工坊班</span>
-    <span id="metaStatus">大三在读</span>
-  </div>
-  <div class="hero__center">
-    <h1 class="hero__title">
-      <em>我的</em>
-      <span>作品集</span>
-    </h1>
-    <div class="hero__id">
-      <p class="hero__id-name">
+  <div class="hero__grid">
+    <div class="hero__copy">
+      <h1 class="hero__title">我的作品集</h1>
+
+      <p class="hero__id">
         <span class="dash" aria-hidden="true">——</span><b>林亿翰</b><span class="en">/ Xixi</span><span class="dash" aria-hidden="true">——</span>
       </p>
+
+      <p class="hero__lead" id="heroLead">拍产品短片、社媒内容与 AI 影像。喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。</p>
+
+      <p class="hero__cred">
+        <span id="metaSchool">广东轻工职业技术大学</span>
+        <span id="metaMajor">软件技术 / AI 新媒体工坊班</span>
+        <span id="metaStatus">大三在读</span>
+      </p>
+
       <a class="hero__resume" href="resume-linyihan.pdf" target="_blank" rel="noopener" type="application/pdf">
         <span>查看个人简历</span>
-        <span class="tag">PDF</span>
         <span class="arrow" aria-hidden="true">↗</span>
       </a>
     </div>
-  </div>
-  <div class="hero__foot">
-    <p id="heroLead">喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。</p>
-    <span class="scroll">Scroll</span>
+
+    <button class="hero__frame" id="heroFrame" type="button" aria-label="播放《奶龙大战豆包》">
+      <span class="hero__frame-in">
+        <img src="cover-nailong.jpg" alt="《奶龙大战豆包》中的画面：夜色里发着红光的机械奶龙" width="1000" height="667">
+      </span>
+      <span class="hero__cap"><b>《奶龙大战豆包》</b><span>AIGC 短片 · 点开播放</span></span>
+    </button>
   </div>
 </section>
 
@@ -420,8 +444,8 @@ img{max-width:100%;display:block}
 ======================================================= */
 var DATA = {
   profile:{
-    lead:"喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。",
-    meta:[["身份","大三在读"],["方向","产品宣传 · 校园内容 · AIGC"]]
+    lead:"拍产品短片、社媒内容与 AI 影像。喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。",
+    meta:[["学校","广东轻工职业技术大学"],["专业","软件技术 / AI 新媒体工坊班"],["身份","大三在读"]]
   },
   categories:["产品宣传","学院视频号","AIGC创作","独立站","习概研练","个人创作"],
   works:[
@@ -782,6 +806,15 @@ var DATA = {
   renderFilters();
   updateCount();
   render();
+
+  /* 首屏那张剧照就是这件作品，点开直接播 */
+  (function(){
+    var hf = document.getElementById("heroFrame");
+    if(!hf) return;
+    var heroWork = WORKS.filter(function(w){return w.cover === "cover-nailong.jpg";})[0];
+    if(!heroWork){ hf.disabled = true; return; }
+    hf.addEventListener("click", function(){ openModal(heroWork); });
+  })();
 
   /* 预加载保利威播放器：SDK 约 900KB，提前拉取避免点开时黑屏等待 */
   if(WORKS.some(function(w){return w.platform==="polyv";})){
