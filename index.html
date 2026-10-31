@@ -273,7 +273,9 @@ var DATA = {
     { id:"13", title:"个人生活 06", category:"个人生活", platform:"bilibili", videoId:"BV1YxxB6FEaF",
       cover:"cover-life06.jpg" },
     { id:"14", title:"个人生活 07", category:"个人生活", platform:"bilibili", videoId:"BV1YxxB6FEnL",
-      cover:"cover-life07.jpg" }
+      cover:"cover-life07.jpg" },
+    { id:"15", title:"工坊班社媒运营课程花絮", category:"学校视频号", platform:"polyv", videoId:"m393c21aead4148f99e3faec4df67b53_m",
+      cover:"cover-plv.jpg", portrait:true, ratio:0.75 }
   ]
 };
 
@@ -287,7 +289,7 @@ var DATA = {
   function updateCount(){document.getElementById("workCount").textContent="("+pad(WORKS.length)+" Projects)";}
   function plabel(w){
     if(w.label) return w.label;
-    return {youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video"}[w.platform]||w.platform;
+    return {youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video",polyv:"Polyv"}[w.platform]||w.platform;
   }
 
   function embed(w){
@@ -384,6 +386,18 @@ var DATA = {
 
   /* ============ 模态框 ============ */
   var modal=document.getElementById("modal"), frame=document.getElementById("modalFrame");
+  var polyvInstance=null, polyvQueue=[], polyvLoading=false;
+  function loadPolyv(cb){
+    if(window.polyvPlayer){ cb(); return; }
+    polyvQueue.push(cb);
+    if(polyvLoading) return;
+    polyvLoading=true;
+    var s=document.createElement("script");
+    s.src="https://player.polyv.net/resp/vod-player/latest/player.js";
+    s.onload=function(){ polyvLoading=false; var q=polyvQueue.splice(0); q.forEach(function(f){try{f();}catch(e){}}); };
+    s.onerror=function(){ polyvLoading=false; };
+    document.head.appendChild(s);
+  }
   function openModal(w){
     currentOpenId = w.id;
     frame.classList.remove("is-portrait");
@@ -403,6 +417,30 @@ var DATA = {
         }
       });
       var pp=mv.play(); if(pp&&pp.catch) pp.catch(function(){});
+    }else if(w.platform==="polyv"){
+      frame.innerHTML = '<div id="polyvHost" style="width:100%;height:100%"></div>';
+      if(w.portrait){
+        var ph = Math.min(window.innerHeight*0.78, 660);
+        var pr = w.ratio || 0.75;
+        var pw = Math.round(ph*pr);
+        var maxW = window.innerWidth - 32;
+        if(pw > maxW){ pw = maxW; ph = Math.round(pw/pr); }
+        frame.classList.add("is-portrait");
+        frame.style.height = ph+"px";
+        frame.style.width = pw+"px";
+      }
+      loadPolyv(function(){
+        try{
+          polyvInstance = window.polyvPlayer({
+            domainInfo:{player:"player.polyv.net"},
+            wrap:"#polyvHost",
+            vid:w.videoId,
+            width:"100%", height:"100%",
+            forceH5:true, playsafe:"",
+            flashvars:{autoplay:"1", df:"", p:"1", playsafe:""}
+          });
+        }catch(e){}
+      });
     }else{
       frame.innerHTML = '<iframe src="'+embed(w)+'" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
     }
@@ -414,6 +452,8 @@ var DATA = {
   function closeModal(){
     modal.classList.remove("is-open"); modal.setAttribute("aria-hidden","true");
     document.body.style.overflow=""; frame.innerHTML=""; currentOpenId=null;
+    try{ if(polyvInstance && polyvInstance.destroy) polyvInstance.destroy(); }catch(e){}
+    polyvInstance=null;
     frame.classList.remove("is-portrait");
     frame.style.width=""; frame.style.height="";
   }
