@@ -3,6 +3,8 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <link rel="preload" as="image" type="image/avif" media="(orientation: portrait)" imagesrcset="assets/night-portrait-640.avif 640w, assets/night-portrait-941.avif 941w" imagesizes="200vw" fetchpriority="high">
+  <link rel="preload" as="image" type="image/avif" media="(orientation: landscape)" imagesrcset="assets/night-panorama-960.avif 960w, assets/night-panorama-1360.avif 1360w, assets/night-panorama-1672.avif 1672w" imagesizes="100vw" fetchpriority="high">
   <meta name="theme-color" content="#121515">
   <title>林亿翰 · 走近我的工作现场 | Linfilm</title>
   <meta name="description" content="走进林亿翰的三间工作室，了解建站开发、海外运营与影像创作，观看 13 支影片，了解他的学习和工作经历。">
@@ -10,9 +12,9 @@
   <meta property="og:description" content="走进林亿翰的三间工作室，了解建站开发、海外运营与影像创作，观看 13 支影片，了解他的学习和工作经历。">
   <meta property="og:image" content="https://linfilm.github.io/xixi-portfolio/assets/street-wide-1672.webp">
   <link rel="icon" href="assets/linfilm.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="style.css?v=92709eea">
-  <script src="site.js?v=2fd4bbf3" defer></script>
-  <script src="atmosphere.js" defer></script>
+  <link rel="stylesheet" href="style.css?v=19db2278">
+  <script src="site.js?v=39cea864" defer></script>
+  <script src="atmosphere.js?v=8ba9d1b5" defer></script>
 </head>
 <body id="top">
 
@@ -25,21 +27,23 @@
         <div class="street-camera">
           <div class="street-pan" id="street-pan"><div class="street-frame">
             <picture>
-              <source media="(max-aspect-ratio: 1/1)" srcset="assets/night-portrait-941.webp" width="941" height="1672">
-              <img class="street-still" src="assets/night-panorama-1672.webp" srcset="assets/night-panorama-960.webp 960w, assets/night-panorama-1672.webp 1672w" sizes="(max-aspect-ratio: 1/1) max(190vw, 178vh), 100vw"
+              <source media="(orientation: portrait)" type="image/avif" srcset="assets/night-portrait-640.avif 640w, assets/night-portrait-941.avif 941w" sizes="200vw" width="941" height="1672">
+              <source media="(orientation: portrait)" srcset="assets/night-portrait-560.webp 560w, assets/night-portrait-941.webp 941w" sizes="200vw" width="941" height="1672">
+              <source type="image/avif" srcset="assets/night-panorama-960.avif 960w, assets/night-panorama-1360.avif 1360w, assets/night-panorama-1672.avif 1672w" sizes="100vw">
+              <img class="street-still" src="assets/night-panorama-1672.webp" srcset="assets/night-panorama-960.webp 960w, assets/night-panorama-1672.webp 1672w" sizes="100vw"
                    alt="雨后的夜街上，建站开发、海外运营和影像创作三间工作室亮着灯。" width="1672" height="941" fetchpriority="high">
             </picture>
             <div class="projector-light" aria-hidden="true"></div>
             <div class="monitor-demo" aria-hidden="true"><span></span></div>
             <div class="print-rack" aria-hidden="true">
-              <span data-title="箱子里有什么？"><img src="assets/qrveo-caja-128.webp" alt=""></span>
-              <span data-title="免费生成二维码"><img src="assets/qrveo-gratis-128.webp" alt=""></span>
-              <span data-title="企业二维码方案"><img src="assets/qrveo-empresas-128.webp" alt=""></span>
+              <span data-title="箱子里有什么？"><img src="assets/qrveo-caja-96.webp" alt=""></span>
+              <span data-title="免费生成二维码"><img src="assets/qrveo-gratis-96.webp" alt=""></span>
+              <span data-title="企业二维码方案"><img src="assets/qrveo-empresas-96.webp" alt=""></span>
             </div>
             <nav class="wall-prints" aria-label="墙上放映的三部作品">
-              <a href="motion.html#film-chair" aria-label="播放《YUFEI 折叠椅》" title="播放《YUFEI 折叠椅》"><img src="assets/cover-yufei.jpg" alt=""><span>YUFEI 折叠椅</span></a>
-              <a href="motion.html#film-xunji" aria-label="播放《寻迹三大》" title="播放《寻迹三大》"><img src="assets/cover-xunji.jpg" alt=""><span>寻迹三大</span></a>
-              <a href="motion.html#film-course" aria-label="播放《社媒运营课程花絮》" title="播放《社媒运营课程花絮》"><img src="assets/cover-plv.jpg" alt=""><span>社媒运营课程花絮</span></a>
+              <a href="motion.html#film-chair" aria-label="播放《YUFEI 折叠椅》" title="播放《YUFEI 折叠椅》"><img src="assets/chair-112.webp" alt="" width="112" height="199"><span>YUFEI 折叠椅</span></a>
+              <a href="motion.html#film-xunji" aria-label="播放《寻迹三大》" title="播放《寻迹三大》"><img src="assets/xunji-192.webp" alt="" width="192" height="109"><span>寻迹三大</span></a>
+              <a href="motion.html#film-course" aria-label="播放《社媒运营课程花絮》" title="播放《社媒运营课程花絮》"><img src="assets/course-192.webp" alt="" width="192" height="108"><span>社媒运营课程花絮</span></a>
             </nav>
             <a class="door door-web" href="web.html" data-door="web" aria-label="走进建站开发工作室">
               <span class="door-tip"><i aria-hidden="true"></i><span><small>QRveo 网站实景</small>进入建站开发</span></span>
@@ -129,7 +133,7 @@
           <div><dt>课程实训</dt><dd>《寻迹三大》源于毛概课的一项研练作业。我带着自己撰写的脚本走进中共三大会址，独立完成实地拍摄与后期剪辑。这次创作让我学会围绕主题取景，再通过镜头的取舍与编排，把现场见闻讲成一个连贯的故事。</dd></div>
         </dl>
       </div>
-      <figure><a class="story-media watch" data-title="寻迹三大" data-category="校园内容" href="https://www.codapan.com/s/GRjXMN7KbUM5" target="_blank" rel="noopener" aria-label="播放校园作品《寻迹三大》"><img src="assets/cover-xunji.jpg" width="960" height="544" alt="蓝天下的红砖墙上叠着《寻迹三大》的手写片名" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放作品</span></a><figcaption>《寻迹三大》<span>校园作品</span></figcaption></figure>
+      <figure><a class="story-media watch" data-title="寻迹三大" data-category="校园内容" href="https://www.codapan.com/s/GRjXMN7KbUM5" target="_blank" rel="noopener" aria-label="播放校园作品《寻迹三大》"><img src="assets/xunji-960.webp" srcset="assets/xunji-480.webp 480w, assets/xunji-960.webp 960w" sizes="(max-width: 720px) 89vw, (min-width: 1280px) 525px, 43vw" width="960" height="544" alt="蓝天下的红砖墙上叠着《寻迹三大》的手写片名" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放作品</span></a><figcaption>《寻迹三大》<span>校园作品</span></figcaption></figure>
     </article>
     <article class="profile-story">
       <div class="story-copy">
@@ -141,7 +145,7 @@
           <div><dt>实践收获</dt><dd>这次项目让我学会把产品需求拆成可逐项验收的开发任务。做搜索优化时，我也开始对照用户的实际搜索用词与页面表达，判断应优先修改哪一页、改什么内容。</dd></div>
         </dl>
       </div>
-      <figure><a class="story-media" href="web.html#qrveo" aria-label="查看 QRveo 独立站案例"><img src="assets/qrveo-home.webp" width="1912" height="992" alt="QRveo 首页展示扫描包装二维码后观看产品视频的用法" loading="lazy"><span class="media-action" aria-hidden="true">查看案例 ↗</span></a><figcaption>QRveo 独立站<span>墨西哥市场 · 网站实景</span></figcaption></figure>
+      <figure><a class="story-media" href="web.html#qrveo" aria-label="查看 QRveo 独立站案例"><img src="assets/qrveo-screen-800.webp" srcset="assets/qrveo-screen-480.webp 480w, assets/qrveo-screen-800.webp 800w, assets/qrveo-screen-1280.webp 1280w" sizes="(max-width: 720px) 89vw, (min-width: 1280px) 525px, 43vw" width="1912" height="992" alt="QRveo 首页展示扫描包装二维码后观看产品视频的用法" loading="lazy"><span class="media-action" aria-hidden="true">查看案例 ↗</span></a><figcaption>QRveo 独立站<span>墨西哥市场 · 网站实景</span></figcaption></figure>
     </article>
     <article class="profile-story">
       <div class="story-copy">
@@ -165,7 +169,7 @@
           </div>
         </nav>
       </div>
-      <figure><a class="story-media watch" data-title="社媒运营课程花絮" data-category="校园内容" href="https://www.codapan.com/s/8P4ehKxNjW4p" target="_blank" rel="noopener" aria-label="播放《社媒运营课程花絮》"><img src="assets/cover-plv.jpg" width="640" height="360" alt="学院社媒运营进阶课程的花絮封面" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放花絮</span></a><figcaption>《社媒运营课程花絮》<span>我为学院剪辑，发布于视频号</span></figcaption></figure>
+      <figure><a class="story-media watch" data-title="社媒运营课程花絮" data-category="校园内容" href="https://www.codapan.com/s/8P4ehKxNjW4p" target="_blank" rel="noopener" aria-label="播放《社媒运营课程花絮》"><img src="assets/course-640.webp" srcset="assets/course-480.webp 480w, assets/course-640.webp 640w" sizes="(max-width: 720px) 89vw, (min-width: 1280px) 525px, 43vw" width="640" height="360" alt="学院社媒运营进阶课程的花絮封面" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放花絮</span></a><figcaption>《社媒运营课程花絮》<span>我为学院剪辑，发布于视频号</span></figcaption></figure>
     </article>
     <article class="profile-story">
       <div class="story-copy">

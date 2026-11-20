@@ -53,7 +53,7 @@ button:focus-visible, a:focus-visible { outline:3px solid #e49a45; outline-offse
 .door-social { left:36%; top:31.5%; width:18.5%; height:39% }
 .door-motion { left:69.5%; top:19%; width:17%; height:57% }
 .shop-sign { position:absolute; z-index:2; pointer-events:none; left:var(--sign-x); top:var(--sign-y); width:var(--sign-w); height:var(--sign-h); transform-origin:50% 10%; opacity:0; transition:opacity .16s,transform .25s ease-out; filter:drop-shadow(0 3px 3px #30190fe0) }
-.shop-sign::before { content:""; position:absolute; inset:0; background-image:var(--sign-photo,url("assets/night-panorama-1672.webp")); background-size:100cqw auto; background-position:calc(0px - var(--sign-x)) calc(0px - var(--sign-y)); clip-path:var(--sign-shape); filter:brightness(1.21) saturate(1.12) }
+.shop-sign::before { content:""; position:absolute; inset:0; background-image:var(--street-photo,none); background-size:100cqw auto; background-position:calc(0px - var(--sign-x)) calc(0px - var(--sign-y)); clip-path:var(--sign-shape); filter:brightness(1.21) saturate(1.12) }
 .sign-web { --sign-x:3.8cqw; --sign-y:17.1cqw; --sign-w:11.35cqw; --sign-h:8.05cqw; --sign-shape:polygon(1% 0,99% 24%,99% 100%,0 86%) }
 .sign-social { --sign-x:40.45cqw; --sign-y:18.55cqw; --sign-w:9.75cqw; --sign-h:4.95cqw; --sign-shape:polygon(1% 0,100% 13%,98% 100%,0 80%) }
 .sign-motion { --sign-x:74.6cqw; --sign-y:9.8cqw; --sign-w:10.5cqw; --sign-h:10.2cqw; --sign-shape:polygon(0 52%,99% 0,100% 63%,1% 100%) }
@@ -411,9 +411,9 @@ body:has(dialog[open]) { overflow:hidden }
   .street { height:100vh; height:100svh }
   .street-pan { overflow-x:auto; overflow-y:hidden; scrollbar-width:none; overscroll-behavior-x:contain; overflow-anchor:none }
   .street-pan::-webkit-scrollbar { display:none }
-  .street-frame { position:relative; left:0; top:50%; transform:translateY(-50%); width:calc(100% * var(--street-scale, 2)); aspect-ratio:941/1672; --sign-photo:url("assets/night-portrait-941.webp") }
+  .street-frame { position:relative; left:0; top:50%; transform:translateY(-50%); width:calc(100% * var(--street-scale, 2)); aspect-ratio:941/1672 }
   /* On very tall screens, continue the sky and cobbles past the full view. */
-  .street-frame::before,.street-frame::after { content:""; position:absolute; left:0; width:100%; height:max(0px,calc(50cqh - 88.84cqw + 1px)); background:center top/100% auto no-repeat url("assets/night-portrait-941.webp"); transform:scaleY(-1); pointer-events:none }
+  .street-frame::before,.street-frame::after { content:""; position:absolute; left:0; width:100%; height:max(0px,calc(50cqh - 88.84cqw + 1px)); background:center top/100% auto no-repeat var(--street-photo,none); transform:scaleY(-1); pointer-events:none }
   .street-frame::before { bottom:100% }
   .street-frame::after { top:100%; background-position:center bottom }
   .scene-zoom:not([hidden]) { display:block; position:absolute; z-index:7; right:max(4%,env(safe-area-inset-right)); bottom:max(3.4%,10px); color:#fff3dd; font:500 .85rem var(--sans) }
@@ -511,8 +511,8 @@ body:has(dialog[open]) { overflow:hidden }
 @media(prefers-reduced-motion:no-preference) {
   html:has(.scene-nav a[href^="#"]:focus,.footer-return[href^="#"]:focus) { scroll-behavior:smooth }
   .scene-bound::before,.scene-bound::after {
-    content:""; position:absolute; z-index:9; inset:0 0 auto; height:42%; background:#121714;
-    pointer-events:none; transform:scaleY(0); transform-origin:top; animation:open-shutter .82s cubic-bezier(.22,.7,.16,1) backwards
+    content:""; position:absolute; z-index:9; inset:0 0 auto; height:12%; background:#121714b0;
+    pointer-events:none; transform:scaleY(0); transform-origin:top; animation:open-shutter .46s cubic-bezier(.22,.7,.16,1) backwards
   }
   .scene-bound::after { inset:auto 0 0; transform-origin:bottom }
   .street-name { animation:reveal-type .58s ease-out .16s backwards }

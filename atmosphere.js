@@ -47,11 +47,16 @@
     const portrait = matchMedia("(max-aspect-ratio:1/1)");
     const wideLamps = [[.17,.36],[.448,.32],[.808,.19]];
     const tallLamps = [[.14,.51],[.51,.50],[.84,.49]];
+    // Rain at a similar depth and distance from a lamp can share one stroke.
+    const brushes = Array.from({length:20},(_,index) => {
+      const depth = Math.floor(index / 5) / 3, light = index % 5 / 4;
+      return {width:.64+.48*depth, color:`rgba(${Math.round(192+61*light)},217,${Math.round(237-60*light)},${.17+.19*depth+.26*light})`};
+    });
     // Most drops are short and distant. A few brighter streaks pass close to the lens.
     const drops = Array.from({length:570}, () => {
       const depth = Math.pow(Math.random(),1.5);
       return {
-        x:Math.random(), y:Math.random(), depth,
+        x:Math.random(), y:Math.random(), brushOffset:Math.round(depth*3)*5,
         length:4 + depth * 17 + Math.random() * 3,
         speed:140 + depth * 360 + Math.random() * 35,
         slant:.09 + depth * .08 + Math.random() * .045
@@ -69,6 +74,7 @@
       const street = streetFrame.getBoundingClientRect(), view = canvas.getBoundingClientRect();
       const lamps = portrait.matches ? tallLamps : wideLamps;
       const count = Math.min(drops.length,Math.max(88,Math.round(width * height / 3200)));
+      const paths = new Array(brushes.length);
       for (let i = 0; i < count; i++) {
         const drop = drops[i];
         drop.x = (drop.x + 1 - dt * drop.speed * drop.slant / (width + 6)) % 1;
@@ -83,13 +89,16 @@
           const across = Math.abs(photoX - lx) / (.018 + below * .36);
           light = Math.max(light,(1 - across) * (1 - below / .24));
         }
-        ctx.beginPath();
-        ctx.moveTo(x,y);
-        ctx.lineTo(x - drop.length * drop.slant,y + drop.length);
-        ctx.lineWidth = .64 + .48 * drop.depth;
-        ctx.strokeStyle = "rgba(" + Math.round(192 + 61 * light) + ",217," + Math.round(237 - 60 * light) + "," + (.17 + .19 * drop.depth + .26 * light) + ")";
-        ctx.stroke();
+        const index = drop.brushOffset + Math.round(light*4);
+        const path = paths[index] ??= new Path2D();
+        path.moveTo(x,y);
+        path.lineTo(x - drop.length * drop.slant,y + drop.length);
       }
+      paths.forEach((path,index) => {
+        ctx.lineWidth = brushes[index].width;
+        ctx.strokeStyle = brushes[index].color;
+        ctx.stroke(path);
+      });
     };
   }
 
@@ -263,7 +272,14 @@
   }
 
   const rainCanvas = document.querySelector(".street-rain");
-  if (rainCanvas) animateSurface(rainCanvas,rain,30);
+  if (rainCanvas) {
+    const photo = document.querySelector(".street-still");
+    const startRain = () => requestAnimationFrame(() => requestAnimationFrame(() => animateSurface(rainCanvas,rain,30)));
+    if (!photo || photo.complete) startRain();
+    else {
+      photo.addEventListener("load",startRain,{once:true});
+    }
+  }
   const sky = document.querySelector(".galaxy-canvas");
   if (sky) {
     const pointer = trackGalaxy(sky.closest(".profile,.dossier"),sky);

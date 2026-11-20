@@ -13,6 +13,13 @@ function setupStreet(street) {
   const portrait = window.matchMedia("(max-aspect-ratio: 1/1)");
   const doors = [...street.querySelectorAll("[data-door]")];
   const photoFrame = scene.querySelector(".street-frame");
+  const photo = photoFrame.querySelector(".street-still");
+  function syncStreetTexture() {
+    // Signs and the panorama edges reuse the exact image selected by <picture>.
+    if (photo.naturalWidth) photoFrame.style.setProperty("--street-photo","url("+JSON.stringify(photo.currentSrc)+")");
+  }
+  photo.addEventListener("load",syncStreetTexture);
+  if (photo.complete) syncStreetTexture();
   // Doorstep positions in the 960 × 540 landscape photograph.
   const doorsteps = {
     web:    {x:245, y:443},
@@ -60,10 +67,12 @@ function setupStreet(street) {
         routes[name] = {x,y};
       }
     }
-    const pixelRatio = Math.min(devicePixelRatio || 1, 1.5);
-    canvas.width = Math.round(paintWidth * pixelRatio);
-    canvas.height = Math.round(paintHeight * pixelRatio);
-    if (ctx) ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    if (!portrait.matches) {
+      const pixelRatio = Math.min(devicePixelRatio || 1, 1.5);
+      canvas.width = Math.round(paintWidth * pixelRatio);
+      canvas.height = Math.round(paintHeight * pixelRatio);
+      if (ctx) ctx.setTransform(pixelRatio, 0, 0, pixelRatio, 0, 0);
+    }
     wake();
   }
   function wake() {
@@ -293,12 +302,14 @@ function setupShopViews(street, doors, portrait) {
   }
   function applyZoom() {
     const scale = range.valueAsNumber / 100;
+    const viewWidth = pan.clientWidth;
+    const nextWidth = viewWidth * scale;
+    if (focus === null) focus = center(doors[current]);
     street.style.setProperty("--street-scale", scale);
     const label = scale.toFixed(2).replace(/0$/, "");
     reading.textContent = label + "×";
     range.setAttribute("aria-valuetext", scale === 1 ? "1 倍，全景" : label + " 倍");
-    if (focus === null) focus = center(doors[current]);
-    autoLeft = offset(focus);
+    autoLeft = Math.max(0,Math.min(nextWidth - viewWidth,focus * nextWidth - viewWidth / 2));
     pan.scrollTo({left:autoLeft, behavior:"instant"});
   }
   function remember() {
@@ -551,8 +562,8 @@ function setupPersonalReel(panel) {
 
 function encoreItems(catalog) {
   const items = [
-    {kind:"网站", title:"QRveo 墨西哥独立站", image:"assets/qrveo-home.webp", href:"https://lwcqr.qrveo.com/", action:"访问独立站"},
-    {kind:"网站", title:"QRveo 建站实训", image:"assets/qrveo-home.webp", href:"web.html#qrveo", action:"看建站过程", sameTab:true},
+    {kind:"网站", title:"QRveo 墨西哥独立站", image:"assets/qrveo-screen-800.webp", href:"https://lwcqr.qrveo.com/", action:"访问独立站"},
+    {kind:"网站", title:"QRveo 建站实训", image:"assets/qrveo-screen-800.webp", href:"web.html#qrveo", action:"看建站过程", sameTab:true},
     {kind:"网站", title:"校企招聘与就业管理平台", image:"assets/studio-web.webp", href:"web.html#case-dev", action:"查看项目", sameTab:true},
     {kind:"海外运营", title:"广告素材测试与投放复盘", image:"assets/studio-social.webp", href:"social.html#case-social", action:"看运营实践", sameTab:true},
     {kind:"个人介绍", title:"关于林亿翰", image:"assets/portrait.webp", href:"index.html#about", action:"阅读介绍", sameTab:true},
