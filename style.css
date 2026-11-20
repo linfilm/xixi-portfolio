@@ -438,6 +438,10 @@ body:has(dialog[open]) { overflow:hidden }
   .print-rack span:nth-child(3) { left:52.55% }
   .projector-light { clip-path:polygon(83% 57.3%,100% 49%,100% 61.5%) }
   .wall-prints { left:89.9%; top:51.1%; width:6.1%; height:8.1%; transform:translateY(16%) perspective(6.1cqw) matrix3d(.805,-.3,.195,0, 0,.805,0,0, 0,0,1,0, 0,0,0,1) }
+  @container (max-width:64px) {
+    .wall-prints span { display:none }
+    .wall-prints a:first-child img { width:100% }
+  }
   .trail-handle,#trail { display:none }
   .encore-sign { left:68%; top:57.5% }
   .shop-views:not([hidden]) { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); width:100% }
