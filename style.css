@@ -411,7 +411,7 @@ body:has(dialog[open]) { overflow:hidden }
   .street { height:100vh; height:100svh }
   .street-pan { overflow-x:auto; overflow-y:hidden; scrollbar-width:none; overscroll-behavior-x:contain; overflow-anchor:none }
   .street-pan::-webkit-scrollbar { display:none }
-  .street-frame { position:relative; left:0; top:50%; transform:translateY(-50%); width:calc(100% * var(--street-scale, 2)); aspect-ratio:941/1672 }
+  .street-frame { position:relative; left:0; top:50%; transform:translateY(-50%); width:calc(100% * var(--street-scale, 1)); aspect-ratio:941/1672 }
   /* On very tall screens, continue the sky and cobbles past the full view. */
   .street-frame::before,.street-frame::after { content:""; position:absolute; left:0; width:100%; height:max(0px,calc(50cqh - 88.84cqw + 1px)); background:center top/100% auto no-repeat var(--street-photo,none); transform:scaleY(-1); pointer-events:none }
   .street-frame::before { bottom:100% }
