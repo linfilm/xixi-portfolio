@@ -105,9 +105,26 @@ summary:focus-visible,input[type="range"]:focus-visible { outline:2px solid #ffd
 
 /* Props share the coordinates of the panoramic photograph. */
 .monitor-demo,.print-rack,.print-rack span { position:absolute; pointer-events:none }
-.monitor-demo { left:18.05%; top:51.2%; width:7.78%; height:11.35%; clip-path:polygon(0 0,100% 7%,100% 94%,0 100%); background:#10241b }
-.monitor-demo span { position:absolute; inset:0; background:#10241b center/contain no-repeat url("assets/qrveo-monitor.webp"); transition:filter .25s }
-.scene[data-preview="web"] .monitor-demo span { filter:brightness(1.12) }
+/* The painted browser toolbar and bezel stay visible. Each camera maps the
+   page onto the four corners of the browser's content area in its photo. */
+.monitor-demo {
+  left:18.0024%; top:52.5239%;
+  --display-width:7.86483cqw;
+  --display-plane:matrix3d(1.16923,.06224,-.16923,0, 0,1.22814,0,0, 0,0,1,0, 0,0,0,1);
+  width:var(--display-width); aspect-ratio:17/10;
+  transform-origin:top left; transform:perspective(var(--display-width)) var(--display-plane);
+  overflow:hidden;
+}
+.monitor-demo span {
+  position:absolute; inset:0;
+  background:center / cover no-repeat url("assets/qrveo-monitor.webp");
+  filter:saturate(.80) contrast(.85) brightness(.87);
+}
+.monitor-demo::after {
+  content:""; position:absolute; inset:0;
+  background:linear-gradient(112deg,rgba(190,204,218,.13),transparent 46%,rgba(221,188,145,.07));
+  box-shadow:inset 0 0 .12cqw rgba(25,33,35,.48);
+}
 .print-rack { inset:0 }
 .print-rack span { top:46.3%; width:3.15%; height:8.95%; background:#795c42 }
 .print-rack span:nth-child(1) { left:39.4%; --tilt:-4deg }
@@ -431,13 +448,21 @@ body:has(dialog[open]) { overflow:hidden }
   .sign-web { --sign-x:8.6cqw; --sign-y:81.0cqw; --sign-w:14.8cqw; --sign-h:10.25cqw; --sign-shape:polygon(0 0,100% 44%,99% 100%,0 65%) }
   .sign-social { --sign-x:42.7cqw; --sign-y:86.8cqw; --sign-w:14.8cqw; --sign-h:5.6cqw; --sign-shape:polygon(1% 2%,100% 0,99% 96%,0 100%) }
   .sign-motion { --sign-x:78.8cqw; --sign-y:78.3cqw; --sign-w:14.7cqw; --sign-h:12cqw; --sign-shape:polygon(0 49%,98% 0,100% 64%,1% 100%) }
-  .monitor-demo { left:9.55%; top:57.62%; width:6.7%; height:3.11% }
+  .monitor-demo {
+    left:9.27205%; top:57.95455%;
+    --display-width:6.99256cqw;
+    --display-plane:matrix3d(1.13981,.03291,-.13981,0, 0,1.24271,0,0, 0,0,1,0, 0,0,0,1);
+  }
   .print-rack span { top:54.05%; width:4.1%; height:3.45% }
   .print-rack span:nth-child(1) { left:43.1% }
   .print-rack span:nth-child(2) { left:47.9% }
   .print-rack span:nth-child(3) { left:52.55% }
   .projector-light { clip-path:polygon(83% 57.3%,100% 49%,100% 61.5%) }
   .wall-prints { left:89.9%; top:51.1%; width:6.1%; height:8.1%; transform:translateY(16%) perspective(6.1cqw) matrix3d(.805,-.3,.195,0, 0,.805,0,0, 0,0,1,0, 0,0,0,1) }
+  @container (max-width:64px) {
+    .wall-prints span { display:none }
+    .wall-prints a:first-child img { width:100% }
+  }
   .trail-handle,#trail { display:none }
   .encore-sign { left:68%; top:57.5% }
   .shop-views:not([hidden]) { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); width:100% }
