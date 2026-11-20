@@ -1,1876 +1,208 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
 <head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>影像作品集</title>
-<meta content="影像作品集 —— 产品宣传 · 校园内容 · AIGC" name="description">
-<meta content="影像作品集" property="og:title">
-<meta content="影像作品集 —— 产品宣传 · 校园内容 · AIGC" property="og:description">
-<meta content="https://linfilm.github.io/xixi-portfolio/cover-yufei.jpg" property="og:image">
-<meta content="website" property="og:type">
-<meta content="summary_large_image" name="twitter:card">
-<script>document.documentElement.classList.add("js")</script>
-<style>
-:root{
-  --ease:cubic-bezier(.22,1,.36,1);
-  --spring:cubic-bezier(.34,1.56,.64,1);
-  --accent:#e2452b;
-  --cab:#080706;
-  /* 车厢内饰：窗洞四周的厚度 + 窗洞圆角 */
-  --cab-t:clamp(22px,2.7vh,32px);
-  --cab-b:clamp(46px,5.2vh,62px);
-  --cab-l:clamp(26px,2.8vw,46px);
-  --cab-r:clamp(26px,2.8vw,46px);
-  --rim-t:clamp(26px,2.8vw,40px);
-  --rim-b:clamp(18px,2vw,28px);
-}
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{height:100%}
-html{scroll-behavior:smooth}
-body{
-  background:var(--cab);color:#fff;
-  font-family:-apple-system,BlinkMacSystemFont,"SF Pro SC","PingFang SC","Hiragino Sans GB","Microsoft YaHei",Arial,sans-serif;
-  -webkit-font-smoothing:antialiased;overflow-x:hidden;
-}
-
-.hero{position:relative;min-height:100svh;overflow:hidden;background:#070605}
-
-/* ===== 车窗 ===== */
-.glass{
-  position:absolute;overflow:hidden;
-  inset:var(--cab-t) var(--cab-r) var(--cab-b) var(--cab-l);
-  border-radius:var(--rim-t) var(--rim-t) var(--rim-b) var(--rim-b);
-  background:#141426;
-  box-shadow:
-    inset 0 34px 80px -34px rgba(255,196,138,.22),
-    inset 0 -46px 54px -34px rgba(0,0,0,.62),
-    inset 0 0 110px rgba(0,0,0,.46);
-}
-/* ===== 车窗框：一整块车厢内饰上开一扇窗 =====
-   `.cab` 用 mask 在车体上挖出窗洞，洞外就是车顶 / 窗台 / 立柱的厚度；
-   `.glass` 正好嵌进洞里，`.cab__rim` 沿洞缘压一圈密封条的亮线。
-   下滑退场时玻璃向前推近、框不动，就成了「镜头贴上玻璃、人被车带着退出」。 */
-.cab{
-  position:absolute;inset:0;z-index:2;pointer-events:none;
-  padding:var(--cab-t) var(--cab-r) var(--cab-b) var(--cab-l);
-  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);
-  -webkit-mask-composite:xor;
-          mask-composite:exclude;
-  background-color:#070605;
-  background-image:
-    /* 顶部：车厢里最暗的地方，微微偏冷 —— 别让整个框都是一个温度 */
-    linear-gradient(180deg,rgba(3,5,9,.62) 0%,rgba(3,5,9,.20) 14%,rgba(3,5,9,0) 34%),
-    /* 窗台反上来的暖环境光，只够到下半截 */
-    radial-gradient(ellipse 74% 54% at 50% 106%,rgba(255,150,90,.075),rgba(255,150,90,.022) 52%,rgba(255,150,90,0) 80%),
-    /* 窗台：夕阳扫过中间一段，两端自己淡下去 */
-    radial-gradient(ellipse 62% 92% at 50% 100%,rgba(255,196,152,.20),rgba(255,196,152,.04) 58%,rgba(255,196,152,0) 86%),
-    /* 窗台本体：受光的顶面 → 一道分缝 → 门板 */
-    linear-gradient(180deg,
-      #3d2d21 0%,#33261b 1.1%,#1c1512 2.6%,
-      #090706 4.4%,#050403 6%,#070605 9%,
-      #0c0908 15%,#0b0807 20%,
-      #030202 24%,#040303 26.5%,
-      #090808 31%,#0a0807 54%,#050404 100%),
-    /* 车顶：绒面 → 分缝 → 窗上饰条 → 靠玻璃处再暗回去 */
-    linear-gradient(180deg,
-      #050404 0%,#090807 34%,#0b0908 52%,
-      #060505 58%,#050404 60%,
-      #16100d 63%,#201813 80%,#191310 92%,#0b0807 100%);
-  background-size:100% 100%,100% 100%,100% var(--cab-b),100% var(--cab-b),100% var(--cab-t);
-  background-position:center,center,bottom,bottom,top;
-  background-repeat:no-repeat;
-}
-/* 内饰的颗粒质感：一层极细的噪点，破掉纯色渐变的塑料感。
-   被 .cab 的 mask 一并裁在框内，不会渗到窗里。 */
-.cab::before{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background-image:url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0naHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmcnIHdpZHRoPScxNDAnIGhlaWdodD0nMTQwJz48ZmlsdGVyIGlkPSduJyB4PScwJyB5PScwJyB3aWR0aD0nMTAwJScgaGVpZ2h0PScxMDAlJz48ZmVUdXJidWxlbmNlIHR5cGU9J2ZyYWN0YWxOb2lzZScgYmFzZUZyZXF1ZW5jeT0nLjg2JyBudW1PY3RhdmVzPSczJyBzdGl0Y2hUaWxlcz0nc3RpdGNoJy8+PGZlQ29sb3JNYXRyaXggdHlwZT0nc2F0dXJhdGUnIHZhbHVlcz0nMCcvPjwvZmlsdGVyPjxyZWN0IHdpZHRoPScxNDAnIGhlaWdodD0nMTQwJyBmaWx0ZXI9J3VybCgjbiknLz48L3N2Zz4=");
-  background-size:140px 140px;
-  opacity:.07;mix-blend-mode:screen;
-}
-/* 两侧立柱：外缘最暗，往窗口方向化开 */
-.cab::after{
-  content:"";position:absolute;inset:0;
-  background:
-    /* 先压一层竖向的暗：立柱越往上越沉进阴影里，
-       下面那点暖光只属于靠近窗台的位置 */
-    linear-gradient(180deg,rgba(3,3,3,.95) 0%,rgba(3,3,3,.70) 30%,
-      rgba(3,3,3,.24) 58%,rgba(3,3,3,.04) 80%,rgba(3,3,3,0) 94%) left/var(--cab-l) 100% no-repeat,
-    linear-gradient(180deg,rgba(3,3,3,.95) 0%,rgba(3,3,3,.70) 30%,
-      rgba(3,3,3,.24) 58%,rgba(3,3,3,.04) 80%,rgba(3,3,3,0) 94%) right/var(--cab-r) 100% no-repeat,
-    linear-gradient(90deg,
-      #020202 0%,#060505 20%,#090807 46%,
-      #050404 60%,#0b0908 70%,
-      #16110e 86%,#201812 100%) left/var(--cab-l) 100% no-repeat,
-    linear-gradient(270deg,
-      #020202 0%,#060505 20%,#090807 46%,
-      #050404 60%,#0b0908 70%,
-      #16110e 86%,#201812 100%) right/var(--cab-r) 100% no-repeat;
-}
-/* 车顶内衬：下沿是一道向下的弧（车顶本来就是拱的），
-   把矩形窗洞的上边盖成一条弧线 —— 这是它不像屏幕边框的关键 */
-.cab__roof{
-  position:absolute;left:-2%;top:0;width:104%;z-index:2;
-  /* 高度 = cab-t / 0.56：path 里 56% 那一档才总能压在窗洞上沿 */
-  height:calc(var(--cab-t) * 1.79);
-  display:block;pointer-events:none;
-}
-/* 洞缘：一圈密封条 —— 内侧一道亮线，外侧一圈厚度 */
-.cab__rim{
-  position:absolute;z-index:2;pointer-events:none;
-  inset:var(--cab-t) var(--cab-r) var(--cab-b) var(--cab-l);
-  border-radius:var(--rim-t) var(--rim-t) var(--rim-b) var(--rim-b);
-  box-shadow:
-    inset 0 26px 40px -18px rgba(0,0,0,.52),
-    inset 0 -28px 46px -20px rgba(0,0,0,.58),
-    inset 18px 0 32px -14px rgba(0,0,0,.40),
-    inset -18px 0 32px -14px rgba(0,0,0,.40);
-}
-/* 洞缘那圈受光的密封条 —— 关键是「不均匀」：
-   只有被夕阳照到的那一段（偏下、偏中）有光，往两端一路淡掉。
-   一整圈均匀的 1px 亮线会立刻出卖成网页卡片的描边。 */
-.cab__rim::after{
-  content:"";position:absolute;inset:0;border-radius:inherit;
-  box-shadow:
-    inset 0 0 0 1px rgba(255,232,204,.14),
-    inset 0 -1px 0 rgba(255,216,178,.40),
-    inset 0 -4px 10px -4px rgba(255,190,142,.20);
-  -webkit-mask:
-    linear-gradient(180deg,rgba(0,0,0,0) 4%,rgba(0,0,0,.28) 48%,#000 76%,#000 100%),
-    linear-gradient(90deg,rgba(0,0,0,0) 0%,#000 16%,#000 84%,rgba(0,0,0,0) 100%);
-  -webkit-mask-composite:source-in;
-          mask:
-    linear-gradient(180deg,rgba(0,0,0,0) 4%,rgba(0,0,0,.28) 48%,#000 76%,#000 100%),
-    linear-gradient(90deg,rgba(0,0,0,0) 0%,#000 16%,#000 84%,rgba(0,0,0,0) 100%);
-          mask-composite:intersect;
-}
-.scene{position:absolute;inset:-2%;animation:bump 2.7s ease-in-out infinite;filter:contrast(1.05) saturate(1.04)}
-@keyframes bump{
-  0%,100%{transform:translate3d(0,0,0)}
-  11%{transform:translate3d(0,.9px,0)}
-  24%{transform:translate3d(0,-.7px,0)}
-  37%{transform:translate3d(0,.6px,0)}
-  53%{transform:translate3d(0,-1px,0)}
-  68%{transform:translate3d(0,.8px,0)}
-  84%{transform:translate3d(0,-.5px,0)}
-}
-
-.sky{
-  position:absolute;top:0;left:0;width:100%;height:68%;
-  background:linear-gradient(180deg,
-    #05081a 0%, #0a0f2c 11%, #131538 21%, #1d1740 30%,
-    #2b1c49 38%, #3b2250 45%, #4d2a52 51%, #61324f 56%,
-    #7a3f4f 61%, #95524f 66%, #b0674f 71%, #c9825e 77%,
-    #e3a077 84%, #f6c19b 91%, #ffe0c2 97%, #fff3e2 100%);
-}
-.glow{
-  position:absolute;left:63.5%;top:66%;width:68vw;height:21vh;
-  transform:translate(-50%,-50%);pointer-events:none;filter:blur(30px);
-  background:radial-gradient(ellipse at center,rgba(255,210,164,.44),rgba(255,188,138,.16) 46%,rgba(255,184,132,0) 70%);
-}
-.sun{
-  position:absolute;left:63.5%;top:61%;width:min(17vw,224px);aspect-ratio:1;
-  transform:translate(-50%,-50%);pointer-events:none;filter:blur(5px);
-  background:radial-gradient(circle,
-    rgba(255,253,246,.95) 0%,
-    rgba(255,240,206,.72) 12%,
-    rgba(255,212,156,.36) 26%,
-    rgba(255,180,124,.12) 44%,
-    rgba(255,164,110,0) 64%);
-}
-.cloud{
-  position:absolute;left:0;border-radius:999px;pointer-events:none;
-  background:linear-gradient(90deg,rgba(255,228,212,0),rgba(255,228,212,.20) 18%,rgba(255,236,220,.30) 50%,rgba(255,228,212,.16) 80%,rgba(255,228,212,0));
-  filter:blur(12px);animation:drift linear infinite;
-}
-@keyframes drift{
-  from{transform:translate3d(-50vw,0,0)}
-  to{transform:translate3d(130vw,0,0)}
-}
-
-.layer{
-  position:absolute;left:0;bottom:0;width:200%;display:flex;
-  will-change:transform;animation:slide linear infinite;animation-duration:var(--dur,40s);
-}
-.layer svg{width:50%;height:100%;flex:0 0 50%;display:block;margin-right:-0.6px}
-/* 两块 SVG 各占 50%，亚像素取整会在接缝处留一道 1px 亮线：
-   让第二块往回压 0.6px 盖住缝，位移循环仍按 -50%，肉眼看不出偏差 */
-@keyframes slide{to{transform:translate3d(-50%,0,0)}}
-
-.fog{
-  height:68%;--dur:150s;opacity:.32;
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,.5) 78%,transparent 92%);
-  mask-image:linear-gradient(180deg,#000 0%,#000 62%,rgba(0,0,0,.5) 78%,transparent 92%);
-}
-.far-a{
-  height:74%;--dur:86s;
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 60%,rgba(0,0,0,.5) 74%,transparent 86%);
-  mask-image:linear-gradient(180deg,#000 0%,#000 60%,rgba(0,0,0,.5) 74%,transparent 86%);
-}
-.far-b{
-  height:64%;--dur:46s;
-  -webkit-mask-image:linear-gradient(180deg,#000 0%,#000 68%,rgba(0,0,0,.55) 82%,transparent 92%);
-  mask-image:linear-gradient(180deg,#000 0%,#000 68%,rgba(0,0,0,.55) 82%,transparent 92%);
-}
-.mid{height:46%;--dur:22s}
-.ground{height:18%;--dur:15s}
-.fore{height:11%;--dur:9s}
-
-
-.haze{
-  position:absolute;left:0;right:0;top:56%;height:26%;pointer-events:none;
-  background:linear-gradient(180deg,
-    rgba(255,214,176,0) 0%,
-    rgba(255,206,164,.30) 24%,
-    rgba(255,206,164,.09) 56%,
-    rgba(255,214,176,0) 100%);
-}
-
-.vignette{
-  position:absolute;inset:0;pointer-events:none;
-  background:
-    radial-gradient(ellipse 128% 98% at 50% 40%,rgba(6,6,8,0) 42%,rgba(6,6,8,.22) 88%,rgba(6,6,8,.44) 100%),
-    linear-gradient(180deg,rgba(6,6,8,.22) 0%,rgba(6,6,8,0) 15%,rgba(6,6,8,0) 78%,rgba(6,6,8,.30) 100%);
-}
-
-.grain{
-  position:absolute;inset:0;pointer-events:none;z-index:2;
-  opacity:.14;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-
-.glare{
-  position:absolute;top:-30%;left:0;width:44%;height:170%;pointer-events:none;
-  background:linear-gradient(90deg,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,.12) 40%,
-    rgba(255,255,255,.035) 62%,
-    rgba(255,255,255,0) 100%);
-  animation:glare 18s ease-in-out infinite;
-}
-@keyframes glare{
-  0%{transform:translate3d(-30%,0,0) rotate(15deg);opacity:0}
-  9%{opacity:.75}
-  32%{opacity:.24}
-  46%{transform:translate3d(320%,0,0) rotate(15deg);opacity:0}
-  100%{transform:translate3d(320%,0,0) rotate(15deg);opacity:0}
-}
-
-/* 玻璃上的一点内饰倒影 —— 让景色看起来是隔着一层玻璃的 */
-.glass::before{
-  content:"";position:absolute;inset:0;z-index:1;pointer-events:none;
-  background:linear-gradient(0deg,rgba(255,190,148,.075) 0%,rgba(255,190,148,.028) 5%,rgba(255,190,148,0) 15%);
-}
-
-/* ===== 内容层 ===== */
-.ui{
-  position:absolute;z-index:3;pointer-events:none;
-  inset:var(--cab-t) var(--cab-r) var(--cab-b) var(--cab-l);
-  display:flex;flex-direction:column;
-  padding:clamp(22px,2.8vw,44px) clamp(20px,3vw,44px) clamp(16px,2.4vw,34px);
-}
-.ui a,.ui button{pointer-events:auto}
-
-.nav{
-  position:relative;z-index:4;
-  display:flex;justify-content:space-between;align-items:center;
-  font-size:13.5px;color:rgba(255,255,255,.72);
-  animation:fadeUp .9s var(--ease) .1s both;
-}
-.brand{font-weight:600;color:#fff;letter-spacing:.02em}
-.brand i{font-style:normal;font-weight:400;color:rgba(255,255,255,.5);margin-left:.55em;letter-spacing:.03em}
-.nav nav{display:flex;gap:26px}
-.nav nav a{color:rgba(255,255,255,.62);text-decoration:none;transition:color .25s var(--ease)}
-.nav nav a:hover{color:#fff}
-
-/* ---- 中心文字 ---- */
-.core{
-  position:relative;z-index:2;margin:auto 0;text-align:center;
-  padding:26px 0;
-}
-/* 文字底下压一层很淡的暗，保证在任何一帧上都能读 */
-.core::before{
-  content:"";position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);
-  width:min(760px,120%);height:150%;pointer-events:none;z-index:-1;
-  background:radial-gradient(ellipse at center,rgba(6,6,10,.42) 0%,rgba(6,6,10,.24) 46%,rgba(6,6,10,0) 72%);
-}
-.core h1{
-  font-size:clamp(44px,6.4vw,88px);line-height:.96;letter-spacing:-.045em;font-weight:700;
-  animation:fadeUp 1s var(--ease) .16s both;
-}
-.core h1 em{font-style:normal;display:block}
-.core h1 span{display:block;font-weight:300;letter-spacing:-.03em;color:rgba(255,255,255,.84)}
-
-.id{
-  margin-top:clamp(12px,1.8vw,20px);
-  display:flex;flex-direction:column;align-items:center;gap:12px;
-  animation:fadeUp 1s var(--ease) .3s both;
-}
-.id-name{
-  display:flex;align-items:baseline;
-  font-size:clamp(14px,1.25vw,16px);letter-spacing:.1em;color:rgba(255,255,255,.62);
-}
-.id-name b{font-weight:600;color:#fff}
-.id-name i{font-style:normal;font-weight:400;color:rgba(255,255,255,.56);margin-left:.42em;letter-spacing:.02em}
-.id-name .dash{color:rgba(255,255,255,.3);margin:0 .1em;letter-spacing:0}
-
-.cv{
-  display:inline-flex;align-items:center;gap:9px;height:39px;padding:0 16px;border-radius:999px;
-  background:rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.22);
-  backdrop-filter:blur(16px) saturate(1.2);
-  -webkit-backdrop-filter:blur(16px) saturate(1.2);
-  color:#fff;text-decoration:none;font-size:13.5px;font-weight:500;letter-spacing:-.01em;
-  -webkit-tap-highlight-color:transparent;
-  transition:background .3s var(--ease),border-color .3s var(--ease),transform .4s var(--spring);
-}
-.cv:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.36);transform:translateY(-1px)}
-.cv:active{transform:scale(.98)}
-.cv b{
-  font-size:10px;font-weight:600;letter-spacing:.06em;
-  padding:2px 5px;border-radius:4px;background:rgba(255,255,255,.18);color:#fff;
-}
-.cv .arrow{font-size:13px;transition:transform .4s var(--spring)}
-.cv:hover .arrow{transform:translate(2px,-2px)}
-
-/* ---- 环上的分类按钮 ---- */
-.ring{position:absolute;inset:0;z-index:2;pointer-events:none}
-.cat{
-  position:absolute;left:0;top:0;
-  display:flex;align-items:center;gap:13px;
-  height:76px;padding:0 26px 0 8px;min-width:198px;
-  border:0;border-radius:999px;overflow:hidden;cursor:pointer;
-  background:rgba(15,12,19,.58);
-  color:#fff;pointer-events:auto;
-  -webkit-backdrop-filter:blur(26px) saturate(1.5) brightness(1);
-  backdrop-filter:blur(26px) saturate(1.5) brightness(1);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.34),
-    inset 0 0 0 1px rgba(255,255,255,.20),
-    0 16px 38px -18px rgba(0,0,0,.62);
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .45s var(--spring),box-shadow .35s var(--ease);
-}
-/* 每一类自己的那一帧：平时是模糊的色温，指到才显影 */
-.cat__bg{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:.20;filter:blur(10px) saturate(1.1);transform:scale(1.3);
-  transition:opacity .5s var(--ease),filter .5s var(--ease),transform .8s var(--ease);
-}
-.cat::after{
-  content:"";position:absolute;inset:0;
-  background:linear-gradient(105deg,rgba(9,8,13,.30) 0%,rgba(9,8,13,.08) 58%,rgba(9,8,13,.16) 100%);
-}
-.cat__thumb{
-  position:relative;z-index:2;flex:0 0 auto;
-  width:52px;height:52px;border-radius:13px;overflow:hidden;background:#1d1c22;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.34),0 6px 14px -6px rgba(0,0,0,.55);
-}
-.cat__thumb img{width:100%;height:100%;object-fit:cover;display:block;filter:saturate(.92)}
-.cat__tx{
-  position:relative;z-index:2;display:flex;flex-direction:column;align-items:flex-start;
-  line-height:1.15;text-align:left;
-}
-.cat__name{font-size:16.5px;font-weight:600;letter-spacing:.005em;white-space:nowrap;
-  color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.34),0 2px 14px rgba(0,0,0,.5)}
-.cat__n{
-  margin-top:5px;padding:2px 8px;border-radius:999px;
-  font-size:11.5px;font-weight:500;letter-spacing:.04em;white-space:nowrap;
-  color:#fff;background:rgba(9,8,13,.44);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.18);
-  transition:background .3s var(--ease),color .3s var(--ease),box-shadow .3s var(--ease);
-}
-.cat:hover .cat__bg,.cat:focus-visible .cat__bg{opacity:.62;filter:blur(1.5px);transform:scale(1.12)}
-.cat:hover .cat__n,.cat:focus-visible .cat__n{background:rgba(226,69,43,.95);color:#fff;box-shadow:inset 0 0 0 1px rgba(255,255,255,.22)}
-.cat:hover{
-  background:rgba(20,16,24,.36);
-  box-shadow:
-    inset 0 1px 0 rgba(255,255,255,.46),
-    inset 0 0 0 1px rgba(255,255,255,.34),
-    0 20px 44px -18px rgba(0,0,0,.7)}
-.cat:focus-visible{outline:2px solid rgba(255,255,255,.85);outline-offset:3px}
-
-/* ---- 入场：从环心弹出，先落在一个「不太准」的位置，再滑回来 ---- */
-/* 用 translate / scale 独立属性，和 layout() 写在 transform 上的 rotate 互不干扰 */
-.ring.is-arming .cat{opacity:0}
-.cat.is-in{
-  animation:
-    catPop var(--popDur,1.05s) var(--popDelay,0s) both,
-    catFade .3s var(--popDelay,0s) both;
-  will-change:translate,scale;
-}
-.ring.is-grid .cat.is-in{
-  animation-name:catDrop,catFade;
-  will-change:translate,scale;
-}
-
-@keyframes catPop{
-  0%   {translate:var(--fx) var(--fy);scale:.22;animation-timing-function:cubic-bezier(.3,.62,.4,1)}
-  41%  {translate:var(--mx) var(--my);scale:1.1;animation-timing-function:linear}
-  51%  {translate:var(--mx) var(--my);scale:1.045;animation-timing-function:cubic-bezier(.32,1.42,.58,1)}
-  70%  {translate:0 0;scale:.985;animation-timing-function:cubic-bezier(.34,1.5,.64,1)}
-  83%  {translate:0 0;scale:1.006;animation-timing-function:ease-out}
-  100% {translate:0 0;scale:1}
-}
-@keyframes catDrop{
-  0%   {translate:0 var(--fy);scale:.88;animation-timing-function:cubic-bezier(.45,0,.55,1)}
-  44%  {translate:var(--mx) var(--my);scale:1.07;animation-timing-function:linear}
-  54%  {translate:var(--mx) var(--my);scale:1.02;animation-timing-function:cubic-bezier(.34,1.45,.6,1)}
-  72%  {translate:0 0;scale:.98;animation-timing-function:cubic-bezier(.34,1.5,.64,1)}
-  86%  {translate:0 0;scale:1.006;animation-timing-function:ease-out}
-  100% {translate:0 0;scale:1}
-}
-@keyframes catFade{from{opacity:0}to{opacity:1}}
-.hero.is-pointing .cat{opacity:.46}
-.hero.is-pointing .cat.on{opacity:1}
-.cat{transition:transform .45s var(--spring),box-shadow .35s var(--ease),opacity .3s var(--ease)}
-
-.foot{
-  position:relative;z-index:4;margin-top:auto;
-  display:flex;justify-content:space-between;align-items:flex-end;gap:24px;
-  font-size:13.5px;color:rgba(255,255,255,.66);
-  animation:fadeUp .9s var(--ease) .42s both;
-}
-.foot p{max-width:46ch;line-height:1.6}
-.scroll{
-  display:flex;align-items:center;gap:7px;white-space:nowrap;
-  font-size:13px;letter-spacing:.06em;color:rgba(255,255,255,.52);
-  text-decoration:none;transition:color .25s var(--ease);
-}
-.scroll:hover{color:rgba(255,255,255,.85)}
-.scroll::after{content:"↓";animation:bob 2s ease-in-out infinite}
-@keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(4px)}}
-
-/* ===== 向下滑动：车窗被列车带着退出 =====
-   --hp 由脚本按滚动进度写入（0 → 1）。只影响 transform / opacity / filter，
-   不碰 .cat 的 backdrop-filter，玻璃质感不受影响。 */
-@media(min-width:981px){
-  .ui{
-    transform:translate3d(0,calc(var(--hp,0) * -78px),0);
-    opacity:calc(1 - var(--hp,0) * 1.30);
-    will-change:transform,opacity;
-  }
-  .glass{transform:scale(calc(1 + var(--hp,0) * .055));will-change:transform}
-  .glass::after{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:radial-gradient(ellipse 112% 92% at 50% 48%,rgba(4,4,11,.64),#04040b 94%);
-    opacity:calc(var(--hp,0) * .95);
-  }
-  .scene{filter:contrast(1.05) saturate(1.04) blur(calc(var(--hp,0) * 1.1px))}
-}
-
-@keyframes fadeUp{from{opacity:0;transform:translate3d(0,16px,0)}to{opacity:1;transform:none}}
-
-/* ===== 平板：环收成三列两行 ===== */
-@media(max-width:980px){
-  .hero{min-height:auto}
-  .ui{
-    position:relative;inset:auto;min-height:100svh;
-    padding:calc(clamp(20px,3vw,44px) + var(--cab-t) + 14px)
-            calc(clamp(20px,3vw,44px) + var(--cab-r))
-            calc(clamp(20px,3vw,44px) + var(--cab-b))
-            calc(clamp(20px,3vw,44px) + var(--cab-l));
-  }
-  .core{margin:clamp(34px,9vh,120px) 0 0}
-  .foot{order:3}
-  .ring.is-grid{
-    position:relative;inset:auto;order:2;
-    display:grid;grid-template-columns:repeat(2,1fr);gap:10px;
-    width:100%;max-width:560px;margin:26px auto 0;pointer-events:auto;
-  }
-  .ring.is-grid .cat{
-    position:relative;left:auto!important;top:auto!important;
-    width:100%;min-width:0;height:62px;padding:0 14px 0 6px;gap:9px;
-    transform:none!important;
-  }
-  .ring.is-grid .cat{background:rgba(12,10,15,.80)}
-  /* 分类数是奇数时，末行只剩一枚、右边空一格 —— 让它补满整行 */
-  .ring.is-grid .cat:last-child:nth-child(odd){grid-column:span 2}
-  .ring.is-grid .cat__thumb{width:46px;height:46px;border-radius:12px}
-  .ring.is-grid .cat__name{font-size:13.5px}
-  .ring.is-grid .cat__n{font-size:10.5px;margin-top:3px;padding:1.5px 7px;font-weight:600}
-  .hero.is-pointing .cat{opacity:1}
-}
-
-/* ===== 手机 ===== */
-@media(max-width:760px){
-  :root{
-    --cab-t:20px;--cab-b:46px;--cab-l:12px;--cab-r:12px;--rim-t:24px;--rim-b:16px}
-  .ui{
-    padding:calc(26px + env(safe-area-inset-top) + var(--cab-t))
-            calc(20px + var(--cab-r))
-            calc(32px + env(safe-area-inset-bottom) + var(--cab-b))
-            calc(20px + var(--cab-l));
-  }
-  .nav{font-size:12.5px}
-  .nav nav{gap:18px}
-  .core{padding:0;margin:clamp(20px,4.5vh,54px) 0 0}
-  .core h1{font-size:15.4vw}
-  .id-name{font-size:13.5px}
-  .ring.is-grid{grid-template-columns:repeat(2,1fr);gap:9px;margin-top:24px;max-width:100%}
-  .ring.is-grid .cat{height:58px;padding:0 12px 0 6px;
-    background:rgba(12,10,15,.86);
-    -webkit-backdrop-filter:none;backdrop-filter:none}
-  .ring.is-grid .cat__bg{display:none}
-  .ring.is-grid .cat__thumb{width:44px;height:44px;border-radius:12px}
-  .ring.is-grid .cat__name{font-size:13px}
-  .foot{flex-direction:column;align-items:flex-start;gap:8px;font-size:12px;margin-top:auto}
-  .foot p{max-width:34ch}
-  .scroll{display:none}
-  .sun{width:52vw;left:64%}
-  .fog,.far-a,.far-b{filter:blur(1.1px)}
-  .glare{display:none}
-  .grain{opacity:.11}
-}
-
-/* ===== 作品区：车开进林子了 ===== */
-.works{
-  position:relative;background:#030605;color:#fff;
-  margin-top:-1px;
-  padding:0 0 clamp(76px,9vw,132px);
-}
-
-/* 林子跟着一起走，停在视口里当背景 */
-.wk-scene{
-  position:sticky;top:0;z-index:0;
-  height:100svh;margin-bottom:-100svh;overflow:hidden;pointer-events:none;
-  background:#030605;
-}
-.wk-sky{
-  position:absolute;inset:0;
-  background:linear-gradient(180deg,
-    #030906 0%,#06120d 14%,#0a1a14 26%,#12271e 38%,#1a3025 47%,
-    #16281f 56%,#0d1b14 68%,#07120c 80%,#030906 92%,#020504 100%);
-}
-.wk-halo{
-  position:absolute;left:50%;top:32%;width:min(1240px,150vw);height:54%;
-  transform:translateX(-50%);filter:blur(48px);
-  background:
-    radial-gradient(ellipse 38% 46% at 24% 32%,rgba(255,186,132,.10),rgba(255,186,132,0) 70%),
-    radial-gradient(ellipse 50% 50% at 50% 50%,
-      rgba(200,228,206,.22),rgba(170,206,180,.08) 44%,rgba(150,190,164,0) 72%);
-}
-
-.wk-depth{position:absolute;left:0;right:0;bottom:0;height:100%;will-change:transform}
-.wk-depth svg{width:100%;height:100%;display:block}
-.wk-depth.far{filter:blur(2px);opacity:.72}
-.wk-depth.mid{filter:blur(.6px);opacity:1;
-  -webkit-mask-image:linear-gradient(180deg,rgba(0,0,0,.12) 0%,rgba(0,0,0,.7) 30%,#000 46%);
-  mask-image:linear-gradient(180deg,rgba(0,0,0,.12) 0%,rgba(0,0,0,.7) 30%,#000 46%);}
-.wk-depth.near{filter:blur(4px);opacity:.9}
-
-.wk-canopy{
-  position:absolute;left:0;right:0;top:0;height:34%;
-  pointer-events:none;filter:drop-shadow(0 24px 42px rgba(0,0,0,.55));
-}
-.wk-canopy svg{width:100%;height:100%;display:block}
-.wk-canopy path{filter:drop-shadow(0 -1px 0 rgba(255,198,152,.16)) drop-shadow(0 0 12px rgba(255,190,140,.10))}
-
-.wk-fern{position:absolute;left:0;right:0;bottom:0;height:14%;pointer-events:none;opacity:.85}
-.wk-fern svg{width:100%;height:100%;display:block}
-
-.wk-fog{
-  position:absolute;left:-22%;width:144%;filter:blur(38px);
-  background:linear-gradient(90deg,
-    rgba(190,214,198,0),rgba(196,220,204,.12) 24%,rgba(212,232,216,.19) 50%,
-    rgba(196,220,204,.10) 76%,rgba(190,214,198,0));
-  animation:fogDrift 82s ease-in-out infinite alternate;
-}
-.wk-fog.f1{top:30%;height:20%;opacity:.8}
-.wk-fog.f2{top:62%;height:16%;opacity:.5;animation-duration:106s;animation-direction:alternate-reverse}
-.wk-fog.f3{top:76%;height:14%;opacity:.34;animation-duration:128s}
-@keyframes fogDrift{from{transform:translate3d(-3.5%,0,0)}to{transform:translate3d(3.5%,0,0)}}
-
-.wk-beam{
-  position:absolute;top:22%;width:11%;height:100%;transform-origin:top center;
-  background:linear-gradient(180deg,rgba(222,244,226,.16),rgba(222,244,226,.04) 50%,rgba(222,244,226,0));
-  filter:blur(15px);mix-blend-mode:screen;opacity:.65;
-  animation:beamSway 34s ease-in-out infinite alternate;
-}
-@keyframes beamSway{from{transform:rotate(8deg)}to{transform:rotate(12.5deg)}}
-
-.wk-shine{
-  position:absolute;left:44%;top:26%;width:16%;height:52%;pointer-events:none;
-  background:linear-gradient(180deg,rgba(214,238,220,0),rgba(214,238,220,.10) 34%,rgba(214,238,220,.05) 70%,rgba(214,238,220,0));
-  filter:blur(26px);mix-blend-mode:screen;
-}
-.wk-ground{
-  position:absolute;left:0;right:0;bottom:0;height:22%;
-  background:linear-gradient(180deg,rgba(3,6,5,0),rgba(3,6,5,.42) 52%,rgba(3,6,5,.86) 84%,#030605 100%);
-}
-.wk-topshade{
-  position:absolute;left:0;right:0;top:0;height:48%;pointer-events:none;
-  background:linear-gradient(180deg,rgba(2,6,4,.66) 0%,rgba(2,6,4,.34) 42%,rgba(2,6,4,0) 100%);
-}
-.wk-vig{
-  position:absolute;inset:0;
-  background:radial-gradient(ellipse 120% 88% at 50% 46%,rgba(2,5,4,0) 36%,rgba(2,5,4,.58) 100%);
-}
-.wk-dim{position:absolute;inset:0;background:rgba(3,6,5,.14)}
-@media(prefers-reduced-motion:reduce){
-  html.js .wk-rv,html.js .wcard{opacity:1;translate:0 0;scale:1;transition:none}
-  .wk-arrive{display:none}
-}
-
-/* 下车：林子先暗下去，再慢慢亮起来 */
-.wk-arrive{
-  position:absolute;inset:0;pointer-events:none;z-index:6;
-  background:radial-gradient(ellipse 120% 88% at 50% 40%,#020504 58%,rgba(2,5,4,.88) 100%);
-  opacity:var(--wkd,0);
-}
-.wk-grain{
-  position:absolute;inset:0;opacity:.10;mix-blend-mode:overlay;
-  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.82' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
-}
-.wk-motes{position:absolute;inset:0;pointer-events:none}
-.mote{
-  position:absolute;width:2px;height:2px;border-radius:50%;
-  background:rgba(224,246,220,.85);box-shadow:0 0 7px 1px rgba(196,238,206,.4);
-  opacity:0;animation:moteFloat linear infinite;
-}
-@keyframes moteFloat{
-  0%{transform:translate3d(0,26px,0);opacity:0}
-  18%{opacity:.5}
-  72%{opacity:.28}
-  100%{transform:translate3d(30px,-96px,0);opacity:0}
-}
-/* 接缝上掠过的一道光，和窗外景物的速度呼应 */
-.wk-rail{position:absolute;left:0;right:0;top:-1px;height:1px;overflow:hidden;pointer-events:none}
-.wk-rail::after{
-  content:"";position:absolute;top:0;left:0;width:28%;height:1px;
-  background:linear-gradient(90deg,rgba(255,200,156,0),rgba(255,206,164,.92),rgba(255,200,156,0));
-  animation:railPass 9s linear infinite;
-}
-@keyframes railPass{from{transform:translate3d(-100%,0,0)}to{transform:translate3d(460%,0,0)}}
-
-/* 滚出车窗后，还找得到方向 */
-.wkbar{
-  position:sticky;top:0;z-index:40;
-  display:flex;align-items:center;justify-content:space-between;gap:16px;
-  height:54px;padding:0 clamp(20px,5vw,64px);
-  background:rgba(4,8,6,.62);
-  -webkit-backdrop-filter:blur(20px) saturate(1.35);
-  backdrop-filter:blur(20px) saturate(1.35);
-  border-bottom:1px solid rgba(255,255,255,.055);
-  opacity:0;transform:translate3d(0,-100%,0);pointer-events:none;
-  transition:opacity .45s var(--ease),transform .6s var(--ease);
-}
-.wkbar.is-on{opacity:1;transform:none;pointer-events:auto}
-.wkbar__brand{font-size:13px;font-weight:600;color:#fff;letter-spacing:.02em;text-decoration:none}
-.wkbar__brand i{font-style:normal;font-weight:400;color:rgba(255,255,255,.44);margin-left:.5em;letter-spacing:.03em}
-.wkbar__right{display:flex;align-items:center;gap:14px}
-.wkbar__state{font-size:12.5px;color:rgba(255,255,255,.5);font-variant-numeric:tabular-nums}
-.wkbar__reset{
-  appearance:none;font:inherit;font-size:12px;letter-spacing:.02em;
-  padding:6px 12px;border-radius:999px;cursor:pointer;
-  color:#fff;background:rgba(255,255,255,.10);
-  border:1px solid rgba(255,255,255,.16);
-  transition:background .25s var(--ease),border-color .25s var(--ease),transform .35s var(--spring);
-  -webkit-tap-highlight-color:transparent;
-}
-.wkbar__reset:hover{background:rgba(255,255,255,.18);border-color:rgba(255,255,255,.3)}
-.wkbar__reset:active{transform:scale(.96)}
-
-.wk{
-  position:relative;z-index:1;
-  max-width:1360px;margin:0 auto;
-  padding:clamp(64px,8vw,112px) clamp(20px,5vw,64px) 0;
-}
-
-.wk-head{position:relative;display:flex;align-items:flex-end;justify-content:space-between;gap:28px;flex-wrap:wrap}
-.wk-head::before{
-  content:"";position:absolute;left:-8%;top:-60px;width:72%;height:230%;z-index:-1;pointer-events:none;
-  background:radial-gradient(ellipse at 26% 50%,rgba(2,6,4,.66),rgba(2,6,4,.30) 46%,rgba(2,6,4,0) 76%);
-}
-.wk-eyebrow{font-size:11.5px;letter-spacing:.22em;text-transform:uppercase;color:rgba(255,255,255,.38);text-shadow:0 1px 14px rgba(2,6,4,.9)}
-.wk-head h2{
-  margin-top:clamp(14px,1.6vw,20px);
-  font-size:clamp(40px,5.6vw,72px);line-height:.94;letter-spacing:-.045em;font-weight:600;
-  text-shadow:0 2px 30px rgba(2,6,4,.72);
-}
-.wk-head h2 .dot{color:var(--accent);margin-left:.03em}
-.wk-count{
-  padding-bottom:8px;text-align:right;line-height:1.7;
-  font-size:12.5px;color:rgba(255,255,255,.44);
-  font-variant-numeric:tabular-nums;letter-spacing:.01em;
-  text-shadow:0 1px 14px rgba(2,6,4,.9);
-}
-.wk-count b{font-size:15px;font-weight:500;color:rgba(255,255,255,.92)}
-
-/* 分类：和环是同一套数据、同一个状态 */
-.wk-tabs{
-  display:flex;flex-wrap:wrap;gap:6px;
-  margin:clamp(24px,3vw,38px) 0 clamp(26px,3.2vw,42px);
-  padding-bottom:20px;border-bottom:1px solid rgba(255,255,255,.07);
-}
-.wk-tab{
-  appearance:none;font:inherit;font-size:13.5px;letter-spacing:.01em;cursor:pointer;
-  display:inline-flex;align-items:center;gap:7px;
-  padding:9px 15px;border-radius:999px;border:1px solid transparent;
-  color:rgba(255,255,255,.82);background:transparent;
-  -webkit-tap-highlight-color:transparent;
-  transition:color .25s var(--ease),background .25s var(--ease),border-color .25s var(--ease);
-}
-.wk-tab i{font-style:normal;font-size:11px;color:rgba(255,255,255,.60);font-variant-numeric:tabular-nums}
-.wk-tab:hover{color:#fff;background:rgba(255,255,255,.07)}
-.wk-tab.is-on{
-  color:#fff;background:rgba(255,255,255,.12);
-  border-color:rgba(255,255,255,.20);
-  box-shadow:0 6px 16px -10px rgba(0,0,0,.8);
-}
-.wk-tab.is-on i{color:rgba(255,255,255,.84)}
-
-/* 卡片 */
-.wk-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:clamp(26px,2.6vw,38px) clamp(14px,1.6vw,24px)}
-
-/* 滚动到这里才浮出来，用 translate 独立属性，不和别的 transform 抢 */
-html.js .wk-rv{
-  opacity:0;translate:0 24px;
-  transition:opacity .8s var(--ease),translate .95s var(--ease);
-  transition-delay:var(--dv,0s);
-}
-html.js .wk-rv.is-seen{opacity:1;translate:0 0}
-.wcard{
-  position:relative;display:block;width:100%;text-align:left;
-  appearance:none;font:inherit;color:inherit;background:none;border:0;padding:0;
-  cursor:pointer;-webkit-tap-highlight-color:transparent;
-}
-/* 进入视口才浮起（html.js 由脚本加上，无脚本时内容照常可见） */
-html.js .wcard{
-  opacity:0;translate:0 28px;scale:.972;
-  transition:opacity .72s var(--ease),translate .95s var(--ease),scale 1.05s var(--spring);
-  transition-delay:var(--d,0ms);
-}
-html.js .wcard.is-seen{opacity:1;translate:0 0;scale:1}
-.wcard__cover{
-  position:relative;display:block;aspect-ratio:16/10;border-radius:16px;overflow:hidden;
-  background:#141210;
-  box-shadow:0 18px 44px -30px rgba(0,0,0,.95),inset 0 0 0 1px rgba(255,255,255,.07);
-  transition:box-shadow .45s var(--ease),transform .5s var(--spring);
-}
-.wcard__img{
-  position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  filter:saturate(.92) brightness(.88) contrast(1.04);
-  transition:transform 1.1s var(--ease),filter .5s var(--ease);
-}
-.wcard__cover::after{
-  content:"";position:absolute;inset:0;pointer-events:none;
-  background:linear-gradient(180deg,rgba(8,7,6,.46) 0%,rgba(8,7,6,0) 34%,rgba(8,7,6,.04) 66%,rgba(8,7,6,.46) 100%);
-  opacity:1;transition:opacity .45s var(--ease);
-}
-.wcard:hover .wcard__cover,.wcard:focus-visible .wcard__cover{
-  transform:translateY(-5px);
-  box-shadow:0 40px 64px -32px rgba(0,0,0,1),inset 0 0 0 1px rgba(255,206,166,.30);
-}
-.wcard:hover .wcard__img,.wcard:focus-visible .wcard__img{
-  transform:scale(1.05);filter:saturate(1) brightness(1) contrast(1.02);
-}
-.wcard:hover .wcard__cover::after{opacity:.55}
-.wcard__num{
-  position:absolute;left:14px;top:12px;z-index:2;
-  font-size:10.5px;letter-spacing:.16em;color:rgba(255,255,255,.62);
-  font-variant-numeric:tabular-nums;text-shadow:0 1px 8px rgba(0,0,0,.65);
-}
-.wcard__tag{
-  position:absolute;right:11px;top:11px;z-index:2;
-  font-size:10.5px;letter-spacing:.07em;color:rgba(255,255,255,.9);
-  padding:4px 9px;border-radius:999px;background:rgba(10,9,8,.40);
-  -webkit-backdrop-filter:blur(9px);backdrop-filter:blur(9px);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.14);
-  opacity:0;transform:translateY(-4px);
-  transition:opacity .35s var(--ease),transform .4s var(--ease);
-}
-.wcard:hover .wcard__tag,.wcard:focus-visible .wcard__tag{opacity:1;transform:none}
-.wcard__play{
-  position:absolute;left:50%;top:50%;z-index:2;
-  width:56px;height:56px;border-radius:50%;margin:-28px 0 0 -28px;
-  display:flex;align-items:center;justify-content:center;
-  background:rgba(255,255,255,.14);
-  -webkit-backdrop-filter:blur(14px) saturate(1.4);backdrop-filter:blur(14px) saturate(1.4);
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.36),0 12px 30px -12px rgba(0,0,0,.85);
-  opacity:0;transform:scale(.86);
-  transition:opacity .35s var(--ease),transform .5s var(--spring);
-}
-.wcard__play::after{
-  content:"";margin-left:4px;
-  border-left:13px solid #fff;border-top:8px solid transparent;border-bottom:8px solid transparent;
-}
-.wcard:hover .wcard__play,.wcard:focus-visible .wcard__play{opacity:1;transform:scale(1)}
-.wcard__body{display:flex;align-items:baseline;justify-content:space-between;gap:12px;padding:14px 2px 0}
-.wcard__title{
-  font-size:15px;font-weight:500;letter-spacing:-.005em;color:#fff;
-  overflow:hidden;text-overflow:ellipsis;white-space:nowrap;
-  text-shadow:0 1px 16px rgba(2,6,4,.95);
-  transition:color .25s var(--ease);
-}
-.wcard:hover .wcard__title{color:#f4c7a4}
-.wcard__meta{flex:0 0 auto;font-size:11.5px;color:rgba(255,255,255,.42);letter-spacing:.02em;
-  text-shadow:0 1px 14px rgba(2,6,4,.95)}
-.wcard:focus-visible{outline:none}
-.wcard:focus-visible .wcard__cover{outline:2px solid rgba(255,255,255,.7);outline-offset:3px}
-.wk-empty{grid-column:1/-1;padding:88px 0;text-align:center;color:rgba(255,255,255,.4);font-size:14px}
-
-.site-foot{
-  display:flex;justify-content:space-between;align-items:center;gap:20px;flex-wrap:wrap;
-  margin-top:clamp(56px,7vw,96px);padding-top:26px;
-  border-top:1px solid rgba(255,255,255,.08);
-  font-size:12.5px;color:rgba(255,255,255,.34);letter-spacing:.02em;
-}
-.site-foot a{color:rgba(255,255,255,.5);text-decoration:none;transition:color .25s var(--ease)}
-.site-foot a:hover{color:#fff}
-
-
-/* 首屏滚出视野后，停掉车窗里的所有循环动画 */
-.hero.is-away .scene,.hero.is-away .scene *,.hero.is-away .glare{animation-play-state:paused!important}
-
-/* ===== 播放层 ===== */
-.modal{position:fixed;inset:0;z-index:100;display:none;align-items:center;justify-content:center;padding:24px}
-.modal.is-open{display:flex}
-.modal__backdrop{
-  position:absolute;inset:0;background:rgba(4,4,6,.76);
-  -webkit-backdrop-filter:blur(28px) saturate(1.2);backdrop-filter:blur(28px) saturate(1.2);
-  animation:fadeIn .3s both;
-}
-.modal__dialog{
-  position:relative;width:min(1020px,100%);
-  background:#0c0b0d;border-radius:22px;overflow:hidden;
-  box-shadow:inset 0 0 0 1px rgba(255,255,255,.10),0 50px 130px -30px rgba(0,0,0,.95);
-  animation:popIn .45s var(--spring) both;
-}
-.modal__frame{position:relative;aspect-ratio:16/9;background:#000}
-.modal__frame iframe,.modal__frame video{position:absolute;inset:0;width:100%;height:100%;border:0;background:#000}
-.modal__frame.is-portrait{aspect-ratio:auto;height:min(78vh,660px);width:auto;margin:0 auto}
-/* 本地 file:// 预览的兜底：封面 + 跳转，替代 CodaPan 的错误页 */
-.modal__fall{position:absolute;inset:0;display:block;text-decoration:none;overflow:hidden}
-.modal__fall-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;
-  opacity:.5;filter:saturate(.85);transform:scale(1.02);transition:opacity .3s,transform .6s}
-.modal__fall::after{content:"";position:absolute;inset:0;
-  background:linear-gradient(180deg,rgba(6,5,4,.55) 0%,rgba(6,5,4,.05) 42%,rgba(6,5,4,.86) 100%)}
-.modal__fall-tip{position:absolute;left:0;right:0;bottom:22px;z-index:2;
-  display:block;text-align:center;padding:0 18px;
-  color:rgba(255,255,255,.82);font-size:12px;line-height:1.65;letter-spacing:.02em}
-.modal__fall:hover .modal__fall-img{opacity:.62;transform:scale(1.05)}
-.modal__fall:focus-visible{outline:1px solid rgba(255,196,140,.7);outline-offset:-1px}
-.modal__close{
-  position:absolute;top:14px;right:14px;z-index:5;
-  width:38px;height:38px;border-radius:50%;cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  color:#fff;font-size:14px;line-height:1;
-  background:rgba(18,17,19,.6);border:1px solid rgba(255,255,255,.18);
-  -webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);
-  transition:background .22s var(--ease),transform .3s var(--spring);
-}
-.modal__close:hover{background:rgba(255,255,255,.18);transform:scale(1.06)}
-.modal__info{
-  padding:18px 24px 22px;display:flex;justify-content:space-between;align-items:flex-end;
-  gap:16px;flex-wrap:wrap;background:#0c0b0d;
-}
-.modal__info h3{font-size:16.5px;font-weight:500;letter-spacing:-.01em;color:#fff}
-.modal__info .sub{font-size:12.5px;color:#e8795f;margin-top:6px;letter-spacing:.02em}
-@keyframes fadeIn{from{opacity:0}to{opacity:1}}
-@keyframes popIn{from{opacity:0;transform:scale(.97)}to{opacity:1;transform:none}}
-
-/* ===== 作品区断点 ===== */
-@media(max-width:1180px){
-  .wk-grid{grid-template-columns:repeat(3,1fr)}
-}
-@media(max-width:980px){
-  .wk{padding-top:clamp(46px,7vw,76px)}
-  .wk-grid{grid-template-columns:repeat(2,1fr);gap:28px 14px}
-  .wk-head h2{font-size:clamp(34px,6.4vw,52px)}
-  .wk-tabs{
-    flex-wrap:nowrap;overflow-x:auto;overflow-y:hidden;
-    scrollbar-width:none;-ms-overflow-style:none;-webkit-overflow-scrolling:touch;
-    scroll-snap-type:x proximity;
-    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%);
-    mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%);
-  }
-  .wk-tabs::-webkit-scrollbar{display:none;width:0;height:0}
-  .wk-tab{flex:0 0 auto;scroll-snap-align:start}
-}
-@media(max-width:760px){
-  .wkbar{height:48px;padding:0 20px}
-  .wkbar__state{font-size:12px}
-  .wk{padding:40px 20px 0}
-  .works{padding-bottom:64px}
-  .wk-head{flex-direction:column;align-items:flex-start;gap:12px}
-  .wk-count{text-align:left;padding-bottom:0;font-size:12px;line-height:1.6}
-  .wk-tabs{
-    flex-wrap:nowrap;gap:6px;margin:20px -20px 24px;padding:0 20px 16px;
-    overflow-x:auto;overflow-y:hidden;scrollbar-width:none;-ms-overflow-style:none;
-    -webkit-overflow-scrolling:touch;scroll-snap-type:x proximity;
-    -webkit-mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%);
-    mask-image:linear-gradient(90deg,#000 0,#000 calc(100% - 26px),transparent 100%);
-  }
-  .wk-tabs::-webkit-scrollbar{display:none;width:0;height:0}
-  .wk-tab{flex:0 0 auto;scroll-snap-align:start;font-size:12.5px;padding:8px 12px;gap:6px}
-  .wk-grid{gap:22px 11px}
-  .wcard__cover{border-radius:13px}
-  .wcard__body{padding:10px 1px 0}
-  .wcard__title{font-size:13.5px}
-  .wcard__meta{font-size:10.5px}
-  .wcard__num{left:10px;top:9px;font-size:9.5px}
-  .wcard__tag{display:none}
-  .wcard__play{width:44px;height:44px;margin:-22px 0 0 -22px}
-  .wcard__play::after{border-left-width:11px;border-top-width:7px;border-bottom-width:7px}
-  .wk-depth.near{display:none}
-  .wk-beam{display:none}
-  .wk-depth.far{filter:blur(1.4px)}
-  .modal{padding:14px}
-  .modal__dialog{border-radius:16px}
-  .modal__info{padding:14px 16px 16px}
-  .modal__close{top:10px;right:10px;width:34px;height:34px}
-}
-
-@media(prefers-reduced-motion:reduce){
-  *{animation:none!important;transition:none!important}
-}
-</style>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#121515">
+  <title>林亿翰 · 走近我的工作现场 | Linfilm</title>
+  <meta name="description" content="走进林亿翰的三间工作室，了解建站开发、海外运营与影像创作，观看 13 支影片，了解他的学习和工作经历。">
+  <meta property="og:title" content="林亿翰 · 走近我的工作现场 | Linfilm">
+  <meta property="og:description" content="走进林亿翰的三间工作室，了解建站开发、海外运营与影像创作，观看 13 支影片，了解他的学习和工作经历。">
+  <meta property="og:image" content="https://linfilm.github.io/xixi-portfolio/assets/street-wide-1672.webp">
+  <link rel="icon" href="assets/linfilm.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="style.css">
+  <script src="site.js" defer></script>
+  <script src="atmosphere.js" defer></script>
 </head>
-<body>
+<body id="top">
 
-<section class="hero" id="hero">
-  <div class="cab" aria-hidden="true"></div>
-  <div class="cab__rim" aria-hidden="true"></div>
-  <svg class="cab__roof" viewBox="0 0 1000 100" preserveAspectRatio="none" aria-hidden="true">
-    <defs>
-      <linearGradient id="roofG" x1="0" y1="0" x2="0" y2="1">
-        <stop offset="0" stop-color="#040303"/>
-        <stop offset=".34" stop-color="#070605"/>
-        <stop offset=".56" stop-color="#090807"/>
-        <stop offset=".62" stop-color="#040303"/>
-        <stop offset=".70" stop-color="#0a0806"/>
-        <stop offset=".90" stop-color="#12100d"/>
-        <stop offset="1" stop-color="#1c1512"/>
-      </linearGradient>
-    </defs>
-    <!-- 车顶：下沿自两端向中间一路缓降，整条边没有一段是水平的 -->
-    <path d="M0,0 H1000 V84 C950,84 906,56 730,56 H270 C94,56 50,84 0,84 Z" fill="url(#roofG)"/>
-    <path d="M0,84 C50,84 94,56 270,56 H730 C906,56 950,84 1000,84" fill="none" stroke="#ffb478" stroke-opacity=".055"
-          stroke-width="13" vector-effect="non-scaling-stroke"/>
-    <path d="M0,84 C50,84 94,56 270,56 H730 C906,56 950,84 1000,84" fill="none" stroke="#ffc48c" stroke-opacity=".10"
-          stroke-width="6" vector-effect="non-scaling-stroke"/>
-    <path d="M0,84 C50,84 94,56 270,56 H730 C906,56 950,84 1000,84" fill="none" stroke="#ffd9b2" stroke-opacity=".17"
-          stroke-width="2.6" vector-effect="non-scaling-stroke"/>
-    <path d="M0,84 C50,84 94,56 270,56 H730 C906,56 950,84 1000,84" fill="none" stroke="#ffe0c2" stroke-opacity=".22"
-          stroke-width="1" vector-effect="non-scaling-stroke"/>
-  </svg>
-
-  <div class="glass">
-    <div class="scene">
-      <div class="sky"></div>
-      <div class="glow"></div>
-      <div class="sun"></div>
-      <div class="cloud" style="top:11%;width:58vw;height:22px;animation-duration:110s"></div>
-      <div class="cloud" style="top:22%;width:40vw;height:16px;animation-duration:88s;animation-delay:-34s;opacity:.7"></div>
-      <div class="cloud" style="top:33%;width:72vw;height:30px;animation-duration:126s;animation-delay:-16s;opacity:.85"></div>
-
-      <div class="layer fog">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-ridge="586" data-amp="86" data-color="#6d5f8c" data-sharp="1.5"></svg>
+<a class="skip" href="#about">跳到个人介绍</a>
+<main>
+  <header class="street" id="street" aria-labelledby="name">
+    <div class="scene-bound" id="projects">
+      <div class="scene" id="scene">
+        <canvas class="street-rain" aria-hidden="true"></canvas>
+        <div class="street-camera">
+          <div class="street-pan" id="street-pan"><div class="street-frame">
+            <picture>
+              <source media="(max-aspect-ratio: 1/1)" srcset="assets/night-portrait-941.webp" width="941" height="1672">
+              <img class="street-still" src="assets/night-panorama-1672.webp" srcset="assets/night-panorama-960.webp 960w, assets/night-panorama-1672.webp 1672w" sizes="(max-aspect-ratio: 1/1) max(190vw, 178vh), 100vw"
+                   alt="雨后的夜街上，建站开发、海外运营和影像创作三间工作室亮着灯。" width="1672" height="941" fetchpriority="high">
+            </picture>
+            <div class="projector-light" aria-hidden="true"></div>
+            <div class="monitor-demo" aria-hidden="true"><span></span></div>
+            <div class="print-rack" aria-hidden="true">
+              <span data-title="箱子里有什么？"><img src="assets/qrveo-caja-128.webp" alt=""></span>
+              <span data-title="免费生成二维码"><img src="assets/qrveo-gratis-128.webp" alt=""></span>
+              <span data-title="企业二维码方案"><img src="assets/qrveo-empresas-128.webp" alt=""></span>
+            </div>
+            <nav class="wall-prints" aria-label="墙上放映的三部作品">
+              <a href="motion.html#film-chair" aria-label="播放《YUFEI 折叠椅》" title="播放《YUFEI 折叠椅》"><img src="assets/cover-yufei.jpg" alt=""><span>YUFEI 折叠椅</span></a>
+              <a href="motion.html#film-xunji" aria-label="播放《寻迹三大》" title="播放《寻迹三大》"><img src="assets/cover-xunji.jpg" alt=""><span>寻迹三大</span></a>
+              <a href="motion.html#film-course" aria-label="播放《社媒运营课程花絮》" title="播放《社媒运营课程花絮》"><img src="assets/cover-plv.jpg" alt=""><span>社媒运营课程花絮</span></a>
+            </nav>
+            <a class="door door-web" href="web.html" data-door="web" aria-label="走进建站开发工作室">
+              <span class="door-tip"><i aria-hidden="true"></i><span><small>QRveo 网站实景</small>进入建站开发</span></span>
+            </a>
+            <span class="shop-sign sign-web" aria-hidden="true"></span>
+            <a class="door door-social" href="social.html" data-door="social" aria-label="走进海外运营工作室">
+              <span class="door-tip"><i aria-hidden="true"></i><span><small>免费生成二维码</small>进入海外运营</span></span>
+            </a>
+            <span class="shop-sign sign-social" aria-hidden="true"></span>
+            <a class="door door-motion" href="motion.html" data-door="motion" aria-label="走进影像创作工作室">
+              <span class="door-tip"><i aria-hidden="true"></i><span><small>按类型看作品</small>进入影像创作</span></span>
+            </a>
+            <span class="shop-sign sign-motion" aria-hidden="true"></span>
+            <a class="encore-sign" href="motion.html#films" aria-label="街角加映，随机发现一件作品" title="随机发现短片、网站、海报或社媒账号"><span>加映</span></a>
+          </div></div>
+          <canvas id="trail" aria-hidden="true"></canvas>
+          <button class="trail-handle" type="button" hidden aria-label="沿光路选门，拖向门口松手进入，或用方向键选择后按回车" aria-pressed="false"><span aria-hidden="true"></span></button>
+        </div>
+        <h1 id="name" class="street-name">林亿翰<i lang="en">Lin Yihan</i></h1>
+        <nav class="scene-nav" aria-label="首页导航">
+          <a href="#street" class="mast-signature" lang="en">Linfilm</a>
+          <a href="#about">关于</a>
+          <a class="nav-resume" href="resume-linyihan.pdf" target="_blank" rel="noopener">简历</a>
+        </nav>
+        <details class="explore">
+          <summary class="walk-in">开始探索</summary>
+          <nav class="explore-rooms" aria-label="选择要进入的工作室">
+            <a href="web.html">建站开发</a><a href="social.html">海外运营</a><a href="motion.html">影像创作</a>
+          </nav>
+        </details>
+        <details class="scene-zoom" hidden>
+          <summary aria-label="调节街景缩放"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><circle cx="10" cy="10" r="6.5"/><path d="m15 15 5.5 5.5M7 10h6M10 7v6"/></svg><span class="zoom-reading">2.0×</span></summary>
+          <div class="zoom-panel">
+            <label for="street-zoom">街景缩放</label>
+            <input type="range" id="street-zoom" min="100" max="300" step="1" value="200" aria-controls="street-pan">
+            <div class="zoom-ends" aria-hidden="true"><span>全景</span><span>近景</span></div>
+          </div>
+        </details>
+        <span id="preview-keys" class="sr" hidden>左右方向键切换预览，按回车进入工作室。</span>
+        <span class="sr" id="route-status" aria-live="polite"></span>
       </div>
-
-      <div class="layer far-a">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-ridge="620" data-amp="168" data-color="#4a3f6b" data-sharp="1.15"></svg>
-      </div>
-
-      <div class="layer far-b">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-ridge="686" data-amp="132" data-color="#221d3a" data-sharp="1.0"></svg>
-      </div>
-
-      <div class="haze"></div>
-
-      <div class="layer mid">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-trees="560"></svg>
-      </div>
-
-      <div class="layer ground">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true">
-          <defs>
-            <linearGradient id="gG" x1="0" y1="0" x2="0" y2="1">
-              <stop offset="0" stop-color="#161d14"/>
-              <stop offset=".2" stop-color="#0e120c"/>
-              <stop offset=".55" stop-color="#080a06"/>
-              <stop offset="1" stop-color="#050704"/>
-            </linearGradient>
-          </defs>
-          <path d="M0,1000 L0,182 q34,-26 68,0 q44,-36 88,0 q36,-20 72,0 q48,-30 96,0 q32,-24 64,0 q46,-32 92,0 q38,-22 76,0 q52,-28 104,0 q34,-24 68,0 q44,-34 88,0 q32,-20 64,0 q34,-26 68,0 L1000,182 L1000,1000 Z" fill="url(#gG)"/>
-        </svg>
-      </div>
-
-      <div class="layer fore">
-        <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" style="filter:blur(2px)">
-          <path d="M0,1000 L0,300 q28,-40 56,-6 q24,-52 48,-4 q32,-36 64,-2 q26,-46 52,-6 q30,-30 60,-2 q24,-50 48,-6 q28,-38 56,-2 q32,-34 64,-6 q26,-44 52,-2 q30,-34 60,-6 q24,-48 48,-2 q28,-36 56,-6 q32,-32 64,-2 q26,-42 52,-4 L1000,300 L1000,1000 Z" fill="#030402"/>
-        </svg>
-      </div>
-
-
-
-      <div class="vignette"></div>
-      <div class="grain"></div>
     </div>
-    <div class="glare"></div>
-  </div>
-
-  <div class="ui">
-    <header class="nav">
-      <span class="brand">林亿翰<i>/ Xixi</i></span>
-      <nav><a href="#works">作品</a></nav>
+    <div class="street-strip">
+      <div class="bound strip-inner">
+        <span class="street-hint"><i class="path-mark" aria-hidden="true"></i><span>点击门牌进入工作室</span></span>
+        <div class="shop-views" role="group" aria-label="切换街景店铺" hidden>
+          <button type="button" data-view="web" aria-pressed="true">建站开发</button>
+          <button type="button" data-view="social" aria-pressed="false">海外运营</button>
+          <button type="button" data-view="motion" aria-pressed="false">影像创作</button>
+        </div>
+        <nav class="studio-shortcuts" aria-label="进入工作室">
+          <a href="web.html">建站开发</a><a href="social.html">海外运营</a><a href="motion.html">影像创作</a>
+        </nav>
+        <a class="resume-link" href="resume-linyihan.pdf" target="_blank" rel="noopener">个人简历 <small>PDF</small></a>
+      </div>
+      <p class="touch-help" hidden>长按门牌预览，轻点进入</p>
+    </div>
+  </header>
+  <section class="profile section" id="about" aria-labelledby="about-title">
+    <div class="galaxy-field" aria-hidden="true"><canvas class="galaxy-canvas"></canvas></div>
+    <div class="bound">
+    <header class="profile-intro">
+      <figure class="portrait"><img src="assets/portrait.webp" alt="林亿翰的肖像" width="100" height="122" loading="lazy"><figcaption lang="en">Lin Yihan</figcaption></figure>
+      <div class="profile-heading"><h2 id="about-title">关于林亿翰</h2>
+        <p class="profile-lead">软件技术专业大三在读，专注海外新媒体运营与跨境数字营销。</p>
+      </div>
+      <div class="profile-bio">
+        <p>在广东轻工职业技术大学 AI 新媒体工坊，我从产品调研、脚本与分镜设计入手，独立完成跨境产品短片的拍摄与后期制作。在 AIGC 创作中，我将分镜转化为提示词，根据生成效果逐镜调整画面。</p>
+        <p>我能独立完成跨境独立站的页面规划、开发与上线。在海外社媒运营实训中，我搭建了两个社媒主页，围绕同一推广主题制作多版广告素材，分批开展 A/B 测试，并根据投放数据复盘，确定下一轮素材的调整方向。</p>
+        <div class="profile-contact">
+          <a class="under" href="resume-linyihan.pdf" target="_blank" rel="noopener">查看简历 <small>PDF</small></a>
+          <button class="under" type="button" popovertarget="contact-card" aria-haspopup="dialog">联系我</button>
+        </div>
+        <div class="contact-card" id="contact-card" popover role="dialog" aria-labelledby="contact-title">
+          <header><h3 id="contact-title">微信联系</h3><button type="button" popovertarget="contact-card" popovertargetaction="hide" aria-label="关闭联系方式">×</button></header>
+          <img src="assets/contact-wechat.jpg" alt="林亿翰的微信二维码，昵称 iL，可用微信扫码添加好友" loading="lazy">
+          <a class="under" href="mailto:3149779635@qq.com">邮件联系 · 3149779635@qq.com</a>
+        </div>
+      </div>
     </header>
-
-    <div class="core" id="core">
-      <h1><em>我的</em><span>作品集</span></h1>
-      <div class="id">
-        <p class="id-name">
-          <span class="dash">——</span><b>林亿翰</b><i>/ Xixi</i><span class="dash">——</span>
-        </p>
-        <a class="cv" href="resume-linyihan.pdf?v=20261101" target="_blank" rel="noopener" type="application/pdf">查看个人简历 <b>PDF</b><span class="arrow">↗</span></a>
+    <article class="profile-story">
+      <div class="story-copy">
+        <p class="story-context">2024 年 9 月入学 · 专科在读</p><h3>教育经历</h3>
+        <p class="story-lead">在广东轻工职业技术大学，软件技术专业教我搭系统，AI 新媒体工坊让我有机会把做出来的东西交给真实用户。</p>
+        <dl class="story-details">
+          <div><dt>专业学习</dt><dd>主修 Java、Web 前端、数据库、软件工程和 Python 数据分析。在工坊班，我还学习跨境建站、社媒运营、广告投放与 AIGC 内容制作。</dd></div>
+          <div><dt>课程实训</dt><dd>《寻迹三大》源于毛概课的一项研练作业。我带着自己撰写的脚本走进中共三大会址，独立完成实地拍摄与后期剪辑。这次创作让我学会围绕主题取景，再通过镜头的取舍与编排，把现场见闻讲成一个连贯的故事。</dd></div>
+        </dl>
       </div>
-    </div>
-
-    <div class="ring" id="ring"></div>
-
-    <footer class="foot">
-      <p>喜欢用影像记录这世界的美好，以及脑子里冒出来的奇想。</p>
-      <a class="scroll" href="#works">下车</a>
-    </footer>
-  </div>
-</section>
-
-<!-- 作品 -->
-<section class="works" id="works">
-  <div class="wk-scene" id="wkScene" aria-hidden="true">
-    <div class="wk-sky"></div>
-    <div class="wk-halo"></div>
-
-    <div class="wk-depth far" data-depth="0.016">
-      <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"
-           data-forest="1" data-n="46" data-wmin="2" data-wmax="8" data-color="#0b1a14"
-           data-branch="0" data-top="300"></svg>
-    </div>
-
-    <div class="wk-fog f1"></div>
-
-    <div class="wk-depth mid" data-depth="0.038">
-      <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"
-           data-forest="1" data-n="9" data-wmin="12" data-wmax="30" data-color="#06110c"
-           data-branch="1" data-top="230"></svg>
-    </div>
-
-    <div class="wk-beam" style="left:26%"></div>
-    <div class="wk-beam" style="left:62%;width:14%;animation-delay:-12s"></div>
-    <div class="wk-shine"></div>
-
-    <div class="wk-canopy">
-      <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-canopy="1"></svg>
-    </div>
-
-    <div class="wk-fog f2"></div>
-
-    <div class="wk-depth near" data-depth="0.07">
-      <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true"
-           data-forest="1" data-n="2" data-wmin="46" data-wmax="82" data-color="#010402"
-           data-branch="0" data-edge="1" data-top="40"></svg>
-    </div>
-
-    <div class="wk-fog f3"></div>
-    <div class="wk-ground"></div>
-
-    <div class="wk-fern">
-      <svg viewBox="0 0 1000 1000" preserveAspectRatio="none" aria-hidden="true" data-fern="1"></svg>
-    </div>
-
-    <div class="wk-motes" id="wkMotes"></div>
-    <div class="wk-topshade"></div>
-    <div class="wk-vig"></div>
-    <div class="wk-dim"></div>
-    <div class="wk-grain"></div>
-    <div class="wk-arrive" id="wkArrive"></div>
-  </div>
-
-  <div class="wk-rail" aria-hidden="true"></div>
-
-  <div class="wkbar" id="wkbar">
-    <a class="wkbar__brand" href="#hero">林亿翰<i>/ Xixi</i></a>
-    <div class="wkbar__right">
-      <span class="wkbar__state" id="barState">全部 · 15 支</span>
-      <button class="wkbar__reset" id="barReset" type="button" hidden>看全部</button>
-    </div>
-  </div>
-
-  <div class="wk">
-    <header class="wk-head">
-      <div class="wk-rv">
-        <p class="wk-eyebrow">Selected Works</p>
-        <h2>作品<span class="dot">.</span></h2>
+      <figure><a class="story-media watch" data-title="寻迹三大" data-category="校园内容" href="https://www.codapan.com/s/GRjXMN7KbUM5" target="_blank" rel="noopener" aria-label="播放校园作品《寻迹三大》"><img src="assets/cover-xunji.jpg" width="960" height="544" alt="蓝天下的红砖墙上叠着《寻迹三大》的手写片名" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放作品</span></a><figcaption>《寻迹三大》<span>校园作品</span></figcaption></figure>
+    </article>
+    <article class="profile-story">
+      <div class="story-copy">
+        <p class="story-context">跨境建站实训 · 商业项目</p><h3>网站与数据</h3>
+        <p class="story-lead">我主导了面向墨西哥市场的 QRveo 独立站项目。我用「扫描包装二维码，观看产品使用视频」这一场景串起首页文案和产品演示，让企业客户直观了解服务的用途。</p>
+        <dl class="story-details">
+          <div><dt>搭建与上线</dt><dd>我先规划首页和产品页的内容，再以 Codex 为主要开发工具，分步完成页面搭建。每完成一页，我都在浏览器中核对布局、文案和跳转效果，逐项调整后发布上线。</dd></div>
+          <div><dt>上线后优化</dt><dd>我用 Google Search Console（GSC）查看页面收录情况和带来展示的搜索词，用 Semrush 研究关键词，再通过 AITDK 检查各页的标题与描述，据此调整页面文案和站内链接。</dd></div>
+          <div><dt>实践收获</dt><dd>这次项目让我学会把产品需求拆成可逐项验收的开发任务。做搜索优化时，我也开始对照用户的实际搜索用词与页面表达，判断应优先修改哪一页、改什么内容。</dd></div>
+        </dl>
       </div>
-      <p class="wk-count wk-rv" style="--dv:.12s"><b id="wkTotal">15</b> 支 · <span id="wkCats">5</span> 类</p>
-    </header>
-
-    <div class="wk-tabs wk-rv" id="wkTabs" style="--dv:.22s" role="group" aria-label="按分类筛选"></div>
-    <div class="wk-grid" id="wkGrid"></div>
-
-    <footer class="site-foot wk-rv" style="--dv:.1s">
-      <span>© 2026 林亿翰 / Xixi</span>
-      <a href="#hero">回到车窗 ↑</a>
-    </footer>
-  </div>
-</section>
-
-<!-- 播放层 -->
-<div class="modal" id="modal" aria-hidden="true">
-  <div class="modal__backdrop" data-close></div>
-  <div class="modal__dialog" role="dialog" aria-modal="true" aria-label="视频播放">
-    <button class="modal__close" data-close type="button" aria-label="关闭">✕</button>
-    <div class="modal__frame" id="modalFrame"></div>
-    <div class="modal__info">
-      <div>
-        <h3 id="modalTitle"></h3>
-        <div class="sub" id="modalSub"></div>
+      <figure><a class="story-media" href="web.html#qrveo" aria-label="查看 QRveo 独立站案例"><img src="assets/qrveo-home.webp" width="1912" height="992" alt="QRveo 首页展示扫描包装二维码后观看产品视频的用法" loading="lazy"><span class="media-action" aria-hidden="true">查看案例 ↗</span></a><figcaption>QRveo 独立站<span>墨西哥市场 · 网站实景</span></figcaption></figure>
+    </article>
+    <article class="profile-story">
+      <div class="story-copy">
+        <p class="story-context">AI 新媒体工坊 · 海外推广</p><h3>海外运营</h3>
+        <p class="story-lead">在工坊，我搭建了两个海外社媒主页。确定内容主线后，我围绕同一主题制作了 10 套以上的多版本广告素材。</p>
+        <dl class="story-details">
+          <div><dt>素材怎么测</dt><dd>我先设定受众和预算，再分批做素材 A/B 测试。复盘时，把不同版本的投放表现放在一起比较，作为下一轮调整文案和画面的依据。</dd></div>
+          <div><dt>墨西哥项目</dt><dd>QRveo 的运营覆盖 Facebook、Instagram 和 TikTok 上的四个账号。我把日常内容发布和付费广告结合起来，向不同受众介绍产品视频二维码。</dd></div>
+        </dl>
+        <nav id="overseas-accounts" aria-label="QRveo 墨西哥社媒账号">
+          <svg class="platform-symbols" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" width="0" height="0">
+            <symbol id="platform-fb" viewBox="0 0 24 24"><path fill="currentColor" d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07C0 18.1 4.39 23.1 10.13 24v-8.44H7.08v-3.49h3.05V9.41c0-3.03 1.8-4.7 4.56-4.7 1.32 0 2.7.24 2.7.24v2.98h-1.52c-1.5 0-1.97.94-1.97 1.89v2.25h3.36l-.54 3.49H13.9V24C19.63 23.1 24 18.1 24 12.07Z"/></symbol>
+            <symbol id="platform-ig" viewBox="0 0 24 24"><g fill="none" stroke="currentColor" stroke-width="2"><rect x="2.5" y="2.5" width="19" height="19" rx="5.4"/><circle cx="12" cy="12" r="4.5"/></g><circle cx="17.8" cy="6.4" r="1.3" fill="currentColor"/></symbol>
+            <symbol id="platform-tt" viewBox="0 0 24 24"><path fill="currentColor" d="M16.6 1.3c.3 3.2 2 5.1 5.2 5.4v3.7a9.4 9.4 0 0 1-5.2-1.7v7.2a7 7 0 1 1-6.1-7v3.8a3.3 3.3 0 1 0 2.3 3.2V1.3z"/></symbol>
+          </svg>
+          <div class="account-links">
+            <a href="https://www.facebook.com/share/1E3sWBmCJ3/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" focusable="false"><use href="#platform-fb"/></svg><span>Facebook<small>账号 1</small></span></a>
+            <a href="https://www.instagram.com/qrveo_mexico_lwcqr?gwpx=MnJoMDJjOXBkdTA2&amp;utm_source=qr" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" focusable="false"><use href="#platform-ig"/></svg><span>Instagram<small>@qrveo_mexico_lwcqr</small></span></a>
+            <a href="https://www.tiktok.com/@qrveo_mexico?_r=1&amp;_t=ZP-9BXU9x0mlbD" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" focusable="false"><use href="#platform-tt"/></svg><span>TikTok<small>@qrveo_mexico</small></span></a>
+            <a href="https://www.facebook.com/share/18unMo2w6H/?mibextid=wwXIfr" target="_blank" rel="noopener noreferrer"><svg aria-hidden="true" focusable="false"><use href="#platform-fb"/></svg><span>Facebook<small>账号 2</small></span></a>
+          </div>
+        </nav>
       </div>
+      <figure><a class="story-media watch" data-title="社媒运营课程花絮" data-category="校园内容" href="https://www.codapan.com/s/8P4ehKxNjW4p" target="_blank" rel="noopener" aria-label="播放《社媒运营课程花絮》"><img src="assets/cover-plv.jpg" width="640" height="360" alt="学院社媒运营进阶课程的花絮封面" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放花絮</span></a><figcaption>《社媒运营课程花絮》<span>我为学院剪辑，发布于视频号</span></figcaption></figure>
+    </article>
+    <article class="profile-story">
+      <div class="story-copy">
+        <p class="story-context">B2B 跨境产品短片 · AIGC</p><h3>影像创作与工具</h3>
+        <p class="story-lead">在折叠椅和双肩包的产品短片中，我独立负责从调研到成片的制作。开拍前，我先研究产品，再把要展示的细节写进脚本、画成分镜。</p>
+        <dl class="story-details">
+          <div><dt>实拍与后期</dt><dd>从现场拍摄到最终成片都由我完成。拍完后，我用 Premiere 和剪映选择镜头、安排剪辑节奏，再完成调色和字幕包装。</dd></div>
+          <div><dt>生成式影像</dt><dd>我用 Seedance 2.5 制作并迭代了 10 支以上的 AIGC 视频。先确定风格和分镜，再把镜头写成提示词，对照生成画面调整下一版描述。</dd></div>
+        </dl>
+        <a class="under" href="motion.html#films">浏览影像作品</a>
+      </div>
+      <figure><a class="story-media watch" data-title="Lec 双肩包" data-category="产品宣传" href="https://www.codapan.com/s/3xAVXOAXtiTO" target="_blank" rel="noopener" aria-label="播放产品短片《Lec 双肩包》"><img src="assets/cover-backpack.jpg" width="640" height="360" alt="《Lec 双肩包》中模特展示背包的画面" loading="lazy"><span class="media-action" aria-hidden="true"><i></i>播放短片</span></a><figcaption>《Lec 双肩包》<span>产品短片 · 调研、拍摄与剪辑</span></figcaption></figure>
+    </article>
+  </div></section>
+</main>
+<footer class="credits-footer" aria-labelledby="footer-title">
+  <div class="bound">
+    <div class="footer-contact">
+      <div class="footer-invite">
+        <h2 id="footer-title">聊聊你的下一个项目</h2>
+        <p>正在筹备独立站、推广海外产品，或想拍一支产品短片？欢迎把你的产品和想法发给我，我们一起聊聊从哪里开始。</p>
+        <a class="footer-mail" href="mailto:3149779635@qq.com">给我发邮件 <span>3149779635@qq.com</span></a>
+      </div>
+      <a class="footer-wechat" href="assets/contact-wechat.jpg" target="_blank" rel="noopener" aria-label="微信扫码联系林亿翰，点击查看二维码原图">
+        <span class="qr-window"><img src="assets/contact-wechat.jpg" width="888" height="1131" alt="林亿翰的微信二维码" loading="lazy"></span>
+        <span>扫码加微信 <small>查看大图 ↗</small></span>
+      </a>
+    </div>
+    <div class="footer-layout">
+      <div><a href="#street" class="signature" lang="en">Linfilm</a><p>© 2026 林亿翰 / Xixi</p></div>
+      <a class="footer-return" href="#street">回到街口 ↑</a>
     </div>
   </div>
-</div>
-
-<script>
-/* ================= 场景 ================= */
-(function(){
-  var NS = "http://www.w3.org/2000/svg";
-  var seed = 20261101;
-  function rnd(){ seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
-
-  var aspect = (window.innerWidth || 1440) / (window.innerHeight || 900);
-  var flat  = Math.min(1, Math.max(0.46, aspect / 1.6));
-
-  /* 山脊：几条整周期正弦叠出峰谷，指数压出尖顶；整数频率保证左右两段无缝接上 */
-  document.querySelectorAll('svg[data-ridge]').forEach(function(svg){
-    var base = parseFloat(svg.getAttribute('data-ridge'));
-    var amp  = (parseFloat(svg.getAttribute('data-amp')) || 90) * flat;
-    var col  = svg.getAttribute('data-color') || '#443a63';
-    var sharp = parseFloat(svg.getAttribute('data-sharp')) || 1.15;
-
-    var f = [1 + Math.floor(rnd() * 2), 3 + Math.floor(rnd() * 2), 6 + Math.floor(rnd() * 3), 13 + Math.floor(rnd() * 6)];
-    var ph = [rnd() * 6.283, rnd() * 6.283, rnd() * 6.283, rnd() * 6.283];
-    var w = [0.50, 0.26, 0.16, 0.08];
-
-    var pts = [];
-    for(var x = 0; x <= 1000; x += 3){
-      var v = 0;
-      for(var i = 0; i < 4; i++) v += w[i] * Math.sin(2 * Math.PI * f[i] * x / 1000 + ph[i]);
-      /* 1-|v| 在过零点形成尖顶，谷是圆的 */
-      var h = Math.pow(Math.max(0, 1 - Math.abs(v) * 1.12), sharp);
-      pts.push(x + "," + (base - h * amp).toFixed(1));
-    }
-
-    var p = document.createElementNS(NS, "path");
-    p.setAttribute("d", "M0,1000 L" + pts.join(" L") + " L1000,1000 Z");
-    p.setAttribute("fill", col);
-    svg.appendChild(p);
-    svg.removeAttribute('data-ridge');
-  });
-
-  document.querySelectorAll('svg[data-trees]').forEach(function(svg){
-    var base = parseFloat(svg.getAttribute('data-trees')) || 560;
-
-    function belt(count, color, hMin, hMax, jitter, round){
-      var d = "";
-      for(var i = 0; i < count; i++){
-        var x = rnd() * 1000;
-        var h = (hMin + Math.pow(rnd(), 1.5) * (hMax - hMin)) * (flat * 0.5 + 0.5);
-        var w = h * (0.26 + rnd() * 0.26) * (flat * 0.55 + 0.45);
-        var y = base + (rnd() - 0.5) * jitter;
-        if(round && rnd() < 0.42){
-          d += "M" + (x - w / 2).toFixed(1) + "," + y.toFixed(1) +
-               " Q" + x.toFixed(1) + "," + (y - h * 1.28).toFixed(1) + " " +
-               (x + w / 2).toFixed(1) + "," + y.toFixed(1) + " Z ";
-        }else{
-          d += "M" + (x - w / 2).toFixed(1) + "," + y.toFixed(1) +
-               " L" + x.toFixed(1) + "," + (y - h).toFixed(1) +
-               " L" + (x + w / 2).toFixed(1) + "," + y.toFixed(1) + " Z ";
-        }
-      }
-      var p = document.createElementNS(NS, "path");
-      p.setAttribute("d", d);
-      p.setAttribute("fill", color);
-      svg.appendChild(p);
-    }
-
-    belt(150, "#101710", 16, 68, 10, true);
-    belt(72, "#050803", 34, 118, 16, true);
-    svg.removeAttribute('data-trees');
-  });
-
-  document.querySelectorAll('.layer').forEach(function(w){
-    var first = w.firstElementChild;
-    if(first) w.appendChild(first.cloneNode(true));
-  });
-})();
-
-/* ================= 林子 ================= */
-(function(){
-  var NS = "http://www.w3.org/2000/svg";
-  var seed = 90210;
-  function rnd(){ seed = (seed * 1103515245 + 12345) & 0x7fffffff; return seed / 0x7fffffff; }
-  function n1(v){ return (+v).toFixed(1); }
-
-  /* ---- 树干：下粗上细、略有弯、顶端没入树冠 ---- */
-  document.querySelectorAll('svg[data-forest]').forEach(function(svg){
-    var n      = +svg.getAttribute('data-n') || 20;
-    var wMin   = +svg.getAttribute('data-wmin') || 6;
-    var wMax   = +svg.getAttribute('data-wmax') || 20;
-    var col    = svg.getAttribute('data-color') || '#0b1410';
-    var branch = svg.getAttribute('data-branch') === "1";
-    var edge   = svg.getAttribute('data-edge') === "1";
-    var baseTop = +(svg.getAttribute('data-top') || 300);
-
-    var trunkD = "", branchD = "";
-
-    for(var i = 0; i < n; i++){
-      var x;
-      if(edge && i < 3){
-        x = i === 0 ? 12 + rnd() * 26 : (i === 1 ? 988 - rnd() * 26 : 8 + rnd() * 40);
-      }else{
-        x = (i + 0.5) / n * 1000 + (rnd() - 0.5) * (1000 / n) * 1.6;
-      }
-
-      var bw    = wMin + Math.pow(rnd(), 1.3) * (wMax - wMin);
-      var top   = baseTop + (rnd() - 0.5) * baseTop * 1.1;
-      top = Math.max(40, Math.min(930, top));
-      var lean  = (rnd() - 0.5) * 64;
-      var halfB = bw * 0.5, halfT = bw * 0.19;
-      var tX    = x + lean;
-
-      trunkD += "M" + n1(x - halfB) + ",1012 " +
-                "C" + n1(x - halfB * 0.95) + ",780 " +
-                      n1(x - halfB * 0.62 + lean * 0.5) + ",520 " +
-                      n1(tX - halfT) + "," + n1(top) + " " +
-                "L" + n1(tX + halfT) + "," + n1(top) + " " +
-                "C" + n1(x + halfB * 0.62 + lean * 0.5) + ",520 " +
-                      n1(x + halfB * 0.95) + ",780 " +
-                      n1(x + halfB) + ",1012 Z ";
-
-      if(branch){
-        var bn = bw > 26 ? 3 : (rnd() < 0.55 ? 2 : 1);
-        for(var k = 0; k < bn; k++){
-          var by  = top + 20 + rnd() * (120 + bw * 1.6);
-          var dir = rnd() < 0.5 ? -1 : 1;
-          var len = bw * (0.7 + rnd() * 0.85);
-          var yy  = by - top;
-          var rootX = tX + (x - tX) * (yy / Math.max(1, 1012 - top)) * 0.4;
-          branchD += "M" + n1(rootX) + "," + n1(by) +
-                     " q" + n1(dir * len * 0.45) + "," + n1(-len * 0.3) +
-                     " " + n1(dir * len) + "," + n1(-len * 0.95) + " ";
-        }
-      }
-    }
-
-    var p = document.createElementNS(NS, "path");
-    p.setAttribute("d", trunkD);
-    p.setAttribute("fill", col);
-    svg.appendChild(p);
-
-    if(branchD){
-      var b = document.createElementNS(NS, "path");
-      b.setAttribute("d", branchD);
-      b.setAttribute("fill", "none");
-      b.setAttribute("stroke", col);
-      b.setAttribute("stroke-width", (wMin * 0.16).toFixed(1));
-      b.setAttribute("stroke-linecap", "round");
-      svg.appendChild(b);
-    }
-    svg.removeAttribute('data-forest');
-  });
-
-  /* ---- 树冠：细碎叶缘 + 几片垂下来的叶簇，偶尔漏几块天光 ---- */
-  document.querySelectorAll('svg[data-canopy]').forEach(function(svg){
-    svg.setAttribute("viewBox", "0 0 1000 1000");
-
-    var defs = document.createElementNS(NS, "defs");
-    var gid = "cg" + Math.floor(rnd() * 1e6);
-    var lg = document.createElementNS(NS, "linearGradient");
-    lg.setAttribute("id", gid);
-    lg.setAttribute("x1", "0"); lg.setAttribute("y1", "0");
-    lg.setAttribute("x2", "0"); lg.setAttribute("y2", "1");
-    [[0,"#010302"],[0.45,"#020a06"],[1,"#061109"]].forEach(function(st){
-      var st1 = document.createElementNS(NS, "stop");
-      st1.setAttribute("offset", st[0]); st1.setAttribute("stop-color", st[1]);
-      lg.appendChild(st1);
-    });
-    defs.appendChild(lg);
-    svg.appendChild(defs);
-
-    var base = 470;
-    function edgeAt(x){
-      return base
-        + Math.sin(x / 37) * 22
-        + Math.sin(x / 91 + 1.3) * 30
-        + Math.sin(x / 15 + 2.1) * 9;
-    }
-
-    var pts = [], x = 1000;
-    while(x > 0){
-      x -= 9 + rnd() * 17;
-      if(x < 0) x = 0;
-      pts.push([x, edgeAt(x) + (rnd() - 0.5) * 26]);
-    }
-
-    var d = "M0,0 L1000,0 L1000," + n1(pts[0][1]) + " ";
-    for(var i = 1; i < pts.length; i++){
-      var p0 = pts[i - 1], p1 = pts[i];
-      d += "Q" + n1((p0[0] + p1[0]) / 2) + "," + n1(Math.min(p0[1], p1[1]) - 4 - rnd() * 10) +
-           " " + n1(p1[0]) + "," + n1(p1[1]) + " ";
-    }
-    d += "L0,0 Z ";
-
-    /* 叶隙 */
-    for(var h = 0; h < 3; h++){
-      var hx = 90 + rnd() * 820, hy = 70 + rnd() * 210;
-      var rx = 12 + rnd() * 34, ry = 6 + rnd() * 14;
-      d += "M" + n1(hx) + "," + n1(hy) +
-           " m" + n1(-rx) + ",0 a" + n1(rx) + "," + n1(ry) + " 0 1,0 " + n1(rx * 2) + ",0" +
-           " a" + n1(rx) + "," + n1(ry) + " 0 1,0 " + n1(-rx * 2) + ",0 Z ";
-    }
-
-    var p = document.createElementNS(NS, "path");
-    p.setAttribute("d", d);
-    p.setAttribute("fill", "url(#" + gid + ")");
-    p.setAttribute("fill-rule", "evenodd");
-    svg.appendChild(p);
-
-    /* 垂下来的叶簇：让边缘不成一条线 */
-    var cd = "";
-    for(var k = 0; k < 46; k++){
-      var cp = pts[Math.floor(rnd() * pts.length)];
-      var cx2 = cp[0] + (rnd() - 0.5) * 26;
-      var cy2 = cp[1] + 6 + rnd() * 46;
-      var rx2 = 5 + rnd() * 13, ry2 = 4 + rnd() * 9;
-      cd += "M" + n1(cx2 - rx2) + "," + n1(cy2) +
-            " a" + n1(rx2) + "," + n1(ry2) + " 0 1,0 " + n1(rx2 * 2) + ",0" +
-            " a" + n1(rx2) + "," + n1(ry2) + " 0 1,0 " + n1(-rx2 * 2) + ",0 Z ";
-    }
-    var cp2 = document.createElementNS(NS, "path");
-    cp2.setAttribute("d", cd);
-    cp2.setAttribute("fill", "url(#" + gid + ")");
-    svg.appendChild(cp2);
-
-    svg.removeAttribute('data-canopy');
-  });
-
-  /* ---- 地面：底下一蓬草和蕨 ---- */
-  document.querySelectorAll('svg[data-fern]').forEach(function(svg){
-    var d = "";
-    for(var i = 0; i < 130; i++){
-      var x = rnd() * 1000;
-      var h = 50 + Math.pow(rnd(), 1.4) * 190;
-      var lean = (rnd() - 0.5) * 70;
-      var w = 4 + rnd() * 7;
-      d += "M" + n1(x - w) + ",1010 " +
-           "Q" + n1(x + lean * 0.4) + "," + n1(1010 - h * 0.6) + " " + n1(x + lean) + "," + n1(1010 - h) + " " +
-           "Q" + n1(x + lean * 0.15 + w * 0.6) + "," + n1(1010 - h * 0.5) + " " + n1(x + w) + ",1010 Z ";
-    }
-    var p = document.createElementNS(NS, "path");
-    p.setAttribute("d", d);
-    p.setAttribute("fill", "#06120c");
-    svg.appendChild(p);
-    svg.removeAttribute('data-fern');
-  });
-
-  /* ---- 林间的浮尘：慢慢往上飘，几点就够 ---- */
-  var motes = document.getElementById("wkMotes");
-  if(motes){
-    for(var i = 0; i < 16; i++){
-      var s = document.createElement("span");
-      s.className = "mote";
-      var sz = (1 + rnd() * 1.8).toFixed(2);
-      s.style.width = sz + "px"; s.style.height = sz + "px";
-      s.style.left = (rnd() * 100).toFixed(2) + "%";
-      s.style.top = (34 + rnd() * 56).toFixed(2) + "%";
-      var dur = 16 + rnd() * 18;
-      s.style.animationDuration = dur.toFixed(1) + "s";
-      s.style.animationDelay = (-rnd() * dur).toFixed(1) + "s";
-      motes.appendChild(s);
-    }
-  }
-
-  /* ---- 视差：越近的树动得越多 ---- */
-  var depths = [].slice.call(document.querySelectorAll(".wk-depth"));
-  var sec = document.getElementById("works");
-  var ticking = false;
-  function par(){
-    ticking = false;
-    var p = -sec.getBoundingClientRect().top;
-    depths.forEach(function(el){
-      var k = parseFloat(el.getAttribute("data-depth")) || 0.03;
-      var y = Math.max(-70, Math.min(70, p * k));
-      el.style.transform = "translate3d(0," + y.toFixed(1) + "px,0)";
-    });
-  }
-  addEventListener("scroll", function(){
-    if(!ticking){ ticking = true; requestAnimationFrame(par); }
-  }, {passive:true});
-  par();
-})();
-
-/* ================= 数据（只改这里） =================
-   platform: codapan | youtube | bilibili | vimeo | local
-   cover   : 只写文件名，路径前缀统一由 MEDIA 拼（落地时改成 ""）
-====================================================== */
-var MEDIA = "";
-var DATA = {
-  categories:["产品宣传","校园内容","AIGC创作","独立站","个人创作"],
-  works:[
-    {id:"1", title:"YUFEI折叠椅", category:"产品宣传", platform:"codapan", videoId:"XKetXPFhBcxa", cover:"cover-yufei.jpg", portrait:true, ratio:0.5625, pos:"50% 30%"},
-    {id:"2", title:"Lec双肩包",   category:"产品宣传", platform:"codapan", videoId:"3xAVXOAXtiTO", cover:"cover-backpack.jpg"},
-    {id:"3", title:"社媒运营课程花絮", category:"校园内容", platform:"codapan", videoId:"8P4ehKxNjW4p", cover:"cover-plv.jpg", portrait:true, ratio:0.75},
-    {id:"4", title:"奶龙大战豆包", category:"AIGC创作", platform:"codapan", videoId:"SpZXzqawwqr8", cover:"cover-nailong.jpg"},
-    {id:"5", title:"墨西哥视频二维码", category:"独立站", platform:"codapan", videoId:"1nSYAZJ5MIIM", cover:"cover-stand.jpg"},
-    {id:"6", title:"视频二维码工作台", category:"独立站", platform:"codapan", videoId:"pOnehtcsihkX", cover:"cover-workbench.jpg"},
-    {id:"7", title:"寻迹三大", category:"校园内容", platform:"codapan", videoId:"GRjXMN7KbUM5", cover:"cover-xunji.jpg"},
-    {id:"8", title:"plog", category:"个人创作", platform:"codapan", videoId:"QBPYyHjtxPGJ", cover:"cover-plog01.jpg", portrait:true, ratio:0.5625},
-    {id:"9", title:"plog", category:"个人创作", platform:"codapan", videoId:"R3czWvN42bRK", cover:"cover-plog02.jpg", portrait:true, ratio:0.75},
-    {id:"10", title:"view", category:"个人创作", platform:"codapan", videoId:"qUSa5lYJ0jW8", cover:"cover-view.jpg", portrait:true, ratio:0.695},
-    {id:"11", title:"view", category:"个人创作", platform:"codapan", videoId:"kOJXjTIOrKtT", cover:"cover-view2.jpg", portrait:true, ratio:0.5625},
-    {id:"12", title:"basketball", category:"个人创作", platform:"codapan", videoId:"kNJQsarhpU1h", cover:"cover-bb01.jpg", portrait:true, ratio:0.5625, pos:"50% 34%"},
-    {id:"13", title:"basketball", category:"个人创作", platform:"codapan", videoId:"UZCMPHZFYgpc", cover:"cover-bb02.jpg", portrait:true, ratio:0.5625, pos:"50% 38%"},
-    {id:"14", title:"game", category:"个人创作", platform:"codapan", videoId:"kdgLahkxOJPr", cover:"cover-game01.jpg"},
-    {id:"15", title:"game", category:"个人创作", platform:"codapan", videoId:"nUCVQuLVeczS", cover:"cover-game02.jpg"}
-  ]
-};
-
-var POS = {"校园内容":"50% 74%"};
-/* 环上的分类缩略图默认取该类第一支的封面；个别封面缩到 30px 后没有可辨识主体，
-   这里指定换成同类的另一张 */
-var THUMB = {"个人创作":"cover-view2.jpg"};
-var ALL = "全部";
-var CURRENT = ALL;
-
-var hero = document.getElementById("hero");
-var core = document.getElementById("core");
-var ring = document.getElementById("ring");
-var worksEl = document.getElementById("works");
-var gridEl = document.getElementById("wkGrid");
-var tabsEl = document.getElementById("wkTabs");
-var barEl = document.getElementById("wkbar");
-var barState = document.getElementById("barState");
-var barReset = document.getElementById("barReset");
-var nodes = [];
-
-function esc(s){
-  return String(s == null ? "" : s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
-}
-function pad(n){ return n < 10 ? "0" + n : "" + n; }
-function plabel(w){
-  return {codapan:"CodaPan",youtube:"YouTube",bilibili:"Bilibili",vimeo:"Vimeo",local:"Video"}[w.platform] || w.platform;
-}
-function countOf(c){ return DATA.works.filter(function(w){ return w.category === c; }).length; }
-function catsInUse(){
-  var seen = {}, out = [];
-  DATA.categories.forEach(function(c){
-    if(DATA.works.some(function(w){ return w.category === c; }) && !seen[c]){ seen[c] = 1; out.push(c); }
-  });
-  DATA.works.forEach(function(w){
-    if(w.category && !seen[w.category]){ seen[w.category] = 1; out.push(w.category); }
-  });
-  return out;
-}
-function coverOf(c){
-  if(THUMB[c]) return THUMB[c];
-  var w = DATA.works.filter(function(x){ return x.category === c; })[0];
-  return w ? w.cover : "";
-}
-
-/* ================= 分类（环） ================= */
-catsInUse().forEach(function(cat){
-  var n = countOf(cat), img = coverOf(cat);
-
-  var b = document.createElement("button");
-  b.className = "cat";
-  b.type = "button";
-  b.setAttribute("data-cat", cat);
-  b.setAttribute("aria-pressed", "false");
-  b.setAttribute("aria-label", "只看「" + cat + "」的 " + n + " 支片子");
-
-  var bg = document.createElement("img");
-  bg.className = "cat__bg";
-  bg.src = MEDIA + img; bg.alt = ""; bg.loading = "eager";
-  if(POS[cat]) bg.style.objectPosition = POS[cat];
-
-  var th = document.createElement("span");
-  th.className = "cat__thumb";
-  var ti = document.createElement("img");
-  ti.src = MEDIA + img; ti.alt = ""; ti.loading = "eager";
-  if(POS[cat]) ti.style.objectPosition = POS[cat];
-  th.appendChild(ti);
-
-  var tx = document.createElement("span");
-  tx.className = "cat__tx";
-  tx.innerHTML = '<span class="cat__name">' + esc(cat) + '</span><span class="cat__n">' + n + ' 支</span>';
-
-  b.appendChild(bg); b.appendChild(th); b.appendChild(tx);
-
-  function on(){ hero.classList.add("is-pointing"); b.classList.add("on"); }
-  function off(){ hero.classList.remove("is-pointing"); b.classList.remove("on"); }
-  b.addEventListener("mouseenter", on);
-  b.addEventListener("mouseleave", off);
-  b.addEventListener("focus", on);
-  b.addEventListener("blur", off);
-  b.addEventListener("click", function(){
-    off();
-    setFilter(cat === CURRENT ? ALL : cat, true);
-  });
-
-  ring.appendChild(b);
-  nodes.push({el:b, cat:cat});
-});
-
-function layout(){
-  var W = hero.clientWidth, H = hero.clientHeight, mobile = window.innerWidth <= 980;
-
-  if(mobile){
-    ring.classList.add("is-grid");
-    nodes.forEach(function(o){
-      o.el.style.left = ""; o.el.style.top = ""; o.el.style.transform = ""; o.el.style.zIndex = "";
-    });
-    return;
-  }
-  ring.classList.remove("is-grid");
-
-  var hr = hero.getBoundingClientRect();
-  var cr = core.getBoundingClientRect();
-  var cx = W / 2;
-  var cy = (cr.top + cr.height / 2) - hr.top;
-
-  /* 从正上方起，按实际数量均分一圈 —— 合并分类后不能再用写死的六等分 */
-  var angles = nodes.map(function(_, i){ return -90 + i * 360 / nodes.length; });
-  var rx = Math.min(468, W * 0.338);
-  var ry = Math.min(262, H * 0.295, cr.height / 2 + 132);
-
-  nodes.forEach(function(o, i){
-    var el = o.el;
-    el.style.transform = "none";
-    var w = el.offsetWidth, h = el.offsetHeight;
-    var t = angles[i] * Math.PI / 180;
-    var sin = Math.sin(t), cos = Math.cos(t);
-    var x = cx + rx * cos, y = cy + ry * sin;
-
-    var rot = Math.atan2(ry * cos, -rx * sin) * 180 / Math.PI;
-    if(rot > 90) rot -= 180;
-    if(rot < -90) rot += 180;
-    rot = Math.max(-11, Math.min(11, rot * 0.34));
-
-    el.style.left = (x - w / 2) + "px";
-    el.style.top  = (y - h / 2) + "px";
-    el.style.transform = "rotate(" + rot.toFixed(1) + "deg)";
-    el.style.zIndex = Math.round(10 + sin * 6);
-  });
-}
-addEventListener("resize", layout);
-addEventListener("load", layout);
-layout();
-setTimeout(layout, 200);
-setTimeout(layout, 700);
-if(window.ResizeObserver) new ResizeObserver(layout).observe(hero);
-
-/* ---- 入场：按钮从环心弹出；桌面上有两枚落得准，其余差一点点再归位 ---- */
-var MISS = [[0,0],[21,-14],[-23,13],[0,0],[17,16],[-18,-11]];
-var armed = false;
-
-if(!matchMedia("(prefers-reduced-motion: reduce)").matches){
-  ring.classList.add("is-arming");
-  addEventListener("load", function(){ setTimeout(enterRing, 300); });
-  setTimeout(enterRing, 1200);          /* load 早于脚本执行时的兜底 */
-}
-
-function enterRing(){
-  if(armed || !nodes.length) return;
-  armed = true;
-  layout();
-
-  var grid = ring.classList.contains("is-grid");
-  var hr = hero.getBoundingClientRect();
-  var cr = core.getBoundingClientRect();
-  var gridTop = ring.getBoundingClientRect().top;
-
-  nodes.forEach(function(o, i){
-    var el = o.el, r = el.getBoundingClientRect();
-    var cx = r.left + r.width / 2, cy = r.top + r.height / 2;
-    var fx, fy, m = MISS[i] || [0, 0];
-
-    if(grid){
-      fx = 0;
-      fy = (gridTop - 46) - cy;                    /* 整排从网格上方同一高度降下 */
-    }else{
-      /* 从环心附近的一小圈里钻出来，不全都叠在同一点 */
-      fx = ((hr.left + hr.width / 2) - cx) * 0.16;
-      fy = ((cr.top + cr.height / 2) - cy) * 0.16;
-    }
-
-    el.style.setProperty("--fx", fx.toFixed(1) + "px");
-    el.style.setProperty("--fy", fy.toFixed(1) + "px");
-    el.style.setProperty("--mx", (grid ? m[0] * 0.75 : m[0]) + "px");
-    el.style.setProperty("--my", (grid ? 4 + Math.abs(m[1]) * 0.45 : m[1]) + "px");
-    el.style.setProperty("--popDelay", (i * 0.066).toFixed(3) + "s");
-  });
-
-  ring.classList.remove("is-arming");
-
-  nodes.forEach(function(o){
-    var el = o.el;
-    el.classList.add("is-in");
-    el.addEventListener("animationend", function h(e){
-      if(e.animationName === "catPop" || e.animationName === "catDrop"){
-        el.classList.remove("is-in");
-        el.style.willChange = "";
-        el.removeEventListener("animationend", h);
-      }
-    });
-  });
-}
-
-/* ================= 作品区 ================= */
-function renderTabs(){
-  var cats = catsInUse();
-  tabsEl.innerHTML = [ALL].concat(cats).map(function(c){
-    var n = c === ALL ? DATA.works.length : countOf(c);
-    return '<button class="wk-tab' + (c === CURRENT ? " is-on" : "") + '" type="button" data-cat="' + esc(c) + '">' +
-             esc(c) + '<i>' + n + '</i>' +
-           '</button>';
-  }).join("");
-}
-
-function renderGrid(){
-  var list = CURRENT === ALL ? DATA.works : DATA.works.filter(function(w){ return w.category === CURRENT; });
-  if(!list.length){
-    gridEl.innerHTML = '<p class="wk-empty is-seen">这一类还在剪。</p>';
-    return;
-  }
-  /* 当前每行几张，决定同一行里依次错开的步长 */
-  var cols = (getComputedStyle(gridEl).gridTemplateColumns || "").split(" ").filter(Boolean).length || 4;
-  gridEl.innerHTML = list.map(function(w, i){
-    return '<button class="wcard" type="button" data-id="' + esc(w.id) + '" style="--d:' + ((i % Math.max(1, cols)) * 60) + 'ms" aria-label="播放 ' + esc(w.title) + '">' +
-      '<span class="wcard__cover">' +
-        '<img class="wcard__img" src="' + MEDIA + esc(w.cover || "") + '" alt="" loading="lazy" decoding="async"' +
-          (w.pos ? ' style="object-position:' + esc(w.pos) + '"' : '') + '>' +
-        '<span class="wcard__num">' + pad(i + 1) + '</span>' +
-        '<span class="wcard__tag">' + esc(plabel(w)) + '</span>' +
-        '<span class="wcard__play"></span>' +
-      '</span>' +
-      '<span class="wcard__body">' +
-        '<span class="wcard__title">' + esc(w.title) + '</span>' +
-        '<span class="wcard__meta">' + esc(w.category) + '</span>' +
-      '</span>' +
-    '</button>';
-  }).join("");
-  observeReveals();
-}
-
-function syncBar(){
-  barState.textContent = (CURRENT === ALL ? "全部" : CURRENT) + " · " +
-    (CURRENT === ALL ? DATA.works.length : countOf(CURRENT)) + " 支";
-  barReset.hidden = CURRENT === ALL;
-}
-
-function syncRing(){
-  nodes.forEach(function(o){
-    var on = o.cat === CURRENT;
-    o.el.classList.toggle("is-picked", on);
-    o.el.setAttribute("aria-pressed", on ? "true" : "false");
-  });
-}
-
-function goWorks(){
-  worksEl.scrollIntoView({behavior:"smooth", block:"start"});
-}
-
-function setFilter(cat, go){
-  CURRENT = cat || ALL;
-  renderTabs(); renderGrid(); syncBar(); syncRing();
-  if(go) goWorks();
-}
-
-tabsEl.addEventListener("click", function(e){
-  var t = e.target.closest(".wk-tab");
-  if(!t) return;
-  setFilter(t.getAttribute("data-cat"), false);
-});
-
-barReset.addEventListener("click", function(){ setFilter(ALL, false); });
-
-gridEl.addEventListener("click", function(e){
-  var card = e.target.closest(".wcard");
-  if(!card) return;
-  var id = card.getAttribute("data-id");
-  var w = DATA.works.filter(function(x){ return x.id === id; })[0];
-  if(w) openModal(w);
-});
-
-/* ================= 向下滑动：页面出现的动效 ================= */
-var arriveEl = document.getElementById("wkArrive");
-var reduceMQ = matchMedia("(prefers-reduced-motion: reduce)");
-var heroH = 0, fxTick = false;
-
-function measureHero(){ heroH = hero ? hero.offsetHeight : 0; }
-
-function scrollFX(){
-  var vh = window.innerHeight || 1;
-  var r = worksEl.getBoundingClientRect();
-
-  /* 滚过首屏：出状态条，并把车窗里那堆循环动画停掉省电 */
-  barEl.classList.toggle("is-on", r.top <= 0);
-  hero.classList.toggle("is-away", r.top <= 0);
-
-  /* 首屏退出：--hp 0→1，内容上浮淡出、车窗推近变暗（CSS 里只在 ≥981px 生效） */
-  if(heroH && hero){
-    var hp = window.scrollY / (heroH * .9);
-    hero.style.setProperty("--hp", (hp < 0 ? 0 : hp > 1 ? 1 : hp).toFixed(3));
-  }
-
-  /* 下车：快到时林子先暗，越过顶部再亮起来，一次呼吸 */
-  if(arriveEl){
-    /* 以「回到交界」为中心的一条窄脉冲：压一下，随即散开 */
-    var o = 1 - Math.abs(r.top / vh - .05) / .3;
-    o = o < 0 ? 0 : o > 1 ? 1 : o;
-    arriveEl.style.setProperty("--wkd", (o * .52).toFixed(3));
-  }
-}
-
-function onScrollFX(){
-  if(fxTick) return;
-  fxTick = true;
-  requestAnimationFrame(function(){ fxTick = false; scrollFX(); });
-}
-
-addEventListener("scroll", onScrollFX, {passive:true});
-addEventListener("resize", function(){ measureHero(); scrollFX(); });
-measureHero(); scrollFX();
-
-/* 内容滚到眼前才浮出来（标题、计数、分类条、卡片、页脚） */
-var revealIO = null;
-
-function revealEls(list){
-  if(!list.length) return;
-  if(reduceMQ.matches || !("IntersectionObserver" in window)){
-    list.forEach(function(el){ el.classList.add("is-seen"); });
-    return;
-  }
-  if(!revealIO){
-    revealIO = new IntersectionObserver(function(entries){
-      entries.forEach(function(en){
-        if(en.isIntersecting){
-          en.target.classList.add("is-seen");
-          revealIO.unobserve(en.target);
-        }
-      });
-    }, {rootMargin:"0px 0px -10% 0px", threshold:.08});
-  }
-  var vh = window.innerHeight;
-  list.forEach(function(el){
-    if(el.classList.contains("is-seen")) return;
-    var r = el.getBoundingClientRect();
-    if(r.bottom > 0 && r.top < vh * .94){
-      /* 已经在视口里（比如刚筛完重建的那一批）：下一帧再亮，让过渡有机会走 */
-      requestAnimationFrame(function(){ el.classList.add("is-seen"); });
-    }else{
-      revealIO.observe(el);
-    }
-  });
-}
-
-function observeReveals(){
-  revealEls([].slice.call(document.querySelectorAll(".wk-rv:not(.is-seen), .wcard:not(.is-seen)")));
-}
-
-/* ================= 播放层 ================= */
-var modal = document.getElementById("modal");
-var frame = document.getElementById("modalFrame");
-var dialog = modal.querySelector(".modal__dialog");
-var lastFocus = null;
-
-/* 竖屏片：按真实画幅算高度，放不下就先压宽再折回高度 */
-function sizePortrait(w){
-  var ph = Math.min(window.innerHeight * 0.78, 660);
-  var pr = w.ratio || 0.75;
-  var pw = Math.round(ph * pr);
-  var maxW = window.innerWidth - 32;
-  if(pw > maxW){ pw = maxW; ph = Math.round(pw / pr); }
-  frame.classList.add("is-portrait");
-  frame.style.height = ph + "px";
-  frame.style.width = pw + "px";
-  dialog.style.width = pw + "px";
-}
-
-function openModal(w){
-  lastFocus = document.activeElement;
-  frame.classList.remove("is-portrait");
-  frame.style.width = ""; frame.style.height = "";
-  dialog.style.width = "";
-  frame.innerHTML = "";
-
-  if(w.portrait) sizePortrait(w);
-
-  if(w.platform === "codapan"){
-    /* CodaPan 官方嵌入：?embed=1 只留画面 + 一行署名，layout=full 输出完整控件；
-       它的 m3u8 不带 CORS 头，没法用自己的 hls.js 播，所以走 iframe。
-       官方 coda-embed.js 会按 16:9 同步 iframe 高度，竖屏片会被压成顶部一小块，
-       所以不引这个脚本，尺寸交给 .is-portrait 自己算。
-       带 autoplay 才会立刻按真实画幅摆位，否则先按 16:9 占位、下面一片黑。 */
-    var share = "https://www.codapan.com/s/" + w.videoId;
-    if(location.protocol === "file:"){
-      /* 双击本地文件时本页是 file:// 的不透明来源，CodaPan 嵌入页拿不到存储和 Referer，
-         会直接给一张「禁止访问」的错误图；这里退化成封面 + 新窗口观看，别让弹层里躺着错误页。 */
-      frame.innerHTML = '<a class="modal__fall" href="' + share + '" target="_blank" rel="noopener">' +
-        '<img class="modal__fall-img" src="' + MEDIA + esc(w.cover || "") + '" alt="">' +
-        '<span class="modal__fall-tip">本地双击预览无法嵌入播放器<br>点这里在 CodaPan 观看</span></a>';
-    }else{
-      var cu = share + "?embed=1&layout=full&autoplay=1";
-      frame.innerHTML = '<iframe src="' + cu + '" width="100%" height="100%" frameborder="0" allowfullscreen ' +
-        'allow="autoplay *; fullscreen *; encrypted-media *; picture-in-picture *" ' +
-        'referrerpolicy="strict-origin-when-cross-origin" title="播放器"></iframe>';
-    }
-  }else if(w.platform === "local"){
-    var mv = document.createElement("video");
-    mv.src = w.videoId; mv.controls = true; mv.autoplay = true; mv.playsInline = true;
-    mv.setAttribute("playsinline","");
-    frame.appendChild(mv);
-    var pp = mv.play(); if(pp && pp.catch) pp.catch(function(){});
-  }else{
-    var url = w.platform === "youtube" ? "https://www.youtube.com/embed/" + w.videoId + "?autoplay=1&rel=0"
-            : w.platform === "bilibili" ? "https://player.bilibili.com/player.html?bvid=" + w.videoId + "&autoplay=1&danmaku=0"
-            : "https://player.vimeo.com/video/" + w.videoId + "?autoplay=1";
-    frame.innerHTML = '<iframe src="' + url + '" allow="autoplay; fullscreen; picture-in-picture" allowfullscreen></iframe>';
-  }
-
-  document.getElementById("modalTitle").textContent = w.title;
-  document.getElementById("modalSub").textContent = [w.category, plabel(w)].filter(Boolean).join(" · ");
-  modal.classList.add("is-open");
-  modal.setAttribute("aria-hidden","false");
-  document.body.style.overflow = "hidden";
-}
-
-function closeModal(){
-  modal.classList.remove("is-open");
-  modal.setAttribute("aria-hidden","true");
-  document.body.style.overflow = "";
-  frame.innerHTML = "";
-  frame.classList.remove("is-portrait");
-  frame.style.width = ""; frame.style.height = "";
-  dialog.style.width = "";
-  if(lastFocus && lastFocus.focus){ try{ lastFocus.focus({preventScroll:true}); }catch(e){} }
-}
-
-Array.prototype.forEach.call(modal.querySelectorAll("[data-close]"), function(el){
-  el.addEventListener("click", closeModal);
-});
-document.addEventListener("keydown", function(e){ if(e.key === "Escape") closeModal(); });
-
-/* ================= 初始化 ================= */
-document.getElementById("wkTotal").textContent = DATA.works.length;
-document.getElementById("wkCats").textContent = catsInUse().length;
-renderTabs();
-renderGrid();
-syncBar();
-syncRing();
-setTimeout(function(){ barEl.classList.toggle("is-on", worksEl.getBoundingClientRect().top <= 0); }, 60);
-</script>
-</body>
-</html>
+</footer>
+
+<dialog id="player" aria-labelledby="player-title">
+  <div class="dialog-head"><div><p class="eyebrow" id="player-type"></p><h2 id="player-title"></h2></div><button type="button" id="close-player" aria-label="关闭播放器">关闭 ×</button></div>
+  <div id="screen"></div><div class="dialog-foot"><span>视频托管于 CodaPan</span><a id="external" target="_blank" rel="noopener">在 CodaPan 观看</a></div>
+</dialog>
+</body></html>
