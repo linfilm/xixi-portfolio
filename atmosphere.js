@@ -25,7 +25,11 @@
       previous = null;
       if (visible && !document.hidden && !failed) request = requestAnimationFrame(frame);
     }
-    new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; restart(); }).observe(canvas);
+    // A canvas touching the viewport edge can intersect with zero visible pixels.
+    new IntersectionObserver(([entry]) => {
+      visible = entry.intersectionRatio >= .01;
+      restart();
+    },{threshold:.01}).observe(canvas);
     new ResizeObserver(restart).observe(canvas);
     document.addEventListener("visibilitychange",restart);
     motionPreference.addEventListener("change",restart);
