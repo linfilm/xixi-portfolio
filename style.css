@@ -45,7 +45,6 @@ button:focus-visible, a:focus-visible { outline:3px solid #e49a45; outline-offse
 .street-pan { position:absolute; inset:0; overflow:clip }
 .street-frame { position:absolute; width:max(100%,calc(100cqh * 1672 / 941)); aspect-ratio:1672/941; left:50%; top:42%; transform:translate(-50%,-42%); container-type:inline-size }
 .street-still { object-fit:cover; user-select:none; pointer-events:none }
-.threshold { position:absolute; inset:0; z-index:6; width:100%; height:100%; object-fit:cover; opacity:0; pointer-events:none }
 .projector-light,#trail { pointer-events:none }
 .projector-light { background:linear-gradient(95deg,#ffe9b433,#f8d39e00); clip-path:polygon(78.4% 52.8%,100% 23%,100% 61.5%); animation:projection 4.3s ease-in-out infinite alternate; mix-blend-mode:screen }
 @keyframes projection { from{opacity:.07} to{opacity:.53} }
@@ -58,14 +57,14 @@ button:focus-visible, a:focus-visible { outline:3px solid #e49a45; outline-offse
 .sign-web { --sign-x:3.8cqw; --sign-y:17.1cqw; --sign-w:11.35cqw; --sign-h:8.05cqw; --sign-shape:polygon(1% 0,99% 24%,99% 100%,0 86%) }
 .sign-social { --sign-x:40.45cqw; --sign-y:18.55cqw; --sign-w:9.75cqw; --sign-h:4.95cqw; --sign-shape:polygon(1% 0,100% 13%,98% 100%,0 80%) }
 .sign-motion { --sign-x:74.6cqw; --sign-y:9.8cqw; --sign-w:10.5cqw; --sign-h:10.2cqw; --sign-shape:polygon(0 52%,99% 0,100% 63%,1% 100%) }
-.shop-sign.lit,.door:focus-visible + .shop-sign,.door.aimed + .shop-sign,.door.entering + .shop-sign,
+.shop-sign.lit,.door:focus-visible + .shop-sign,.door.aimed + .shop-sign,
 .scene[data-preview="web"] .sign-web,.scene[data-preview="social"] .sign-social,.scene[data-preview="motion"] .sign-motion { opacity:1; transform:translateY(-3px) scale(1.055) rotate(-.6deg) }
 @media (hover:hover) { .door:hover + .shop-sign { opacity:1; transform:translateY(-3px) scale(1.055) rotate(-.6deg) } }
 .door-tip { position:absolute; left:50%; bottom:7%; white-space:nowrap; display:flex; gap:8px; align-items:center; border:1px solid #f1d6a989; border-radius:2px; transform:translate(-50%,5px); background:#15140ede; color:#fff3d8; padding:5px 13px; opacity:0; transition:opacity .22s, transform .22s; font-size:clamp(.8rem,1vw,1rem); pointer-events:none }
 .door-tip i { width:7px; height:7px; border:1px solid #fec17d; transform:rotate(45deg) }
 .door-tip small { display:none; font-size:.74rem; color:#f8c98c }
 .scene[data-preview] .door-tip small { display:block }
-.door:focus-visible .door-tip,.door.entering .door-tip,.door.aimed .door-tip,
+.door:focus-visible .door-tip,.door.aimed .door-tip,
 .scene[data-preview="web"] .door-web .door-tip,.scene[data-preview="social"] .door-social .door-tip,.scene[data-preview="motion"] .door-motion .door-tip { opacity:1; transform:translate(-50%,0) }
 @media (hover:hover) { .door:hover .door-tip { opacity:1; transform:translate(-50%,0) } }
 .door:focus-visible { outline:2px solid #ffdf9f; outline-offset:0; box-shadow:inset 0 0 35px #ffd69835 }
@@ -511,16 +510,14 @@ body:has(dialog[open]) { overflow:hidden }
 .page-exit { position:fixed; z-index:100; inset:0; pointer-events:none; background:#121714 }
 @media(prefers-reduced-motion:no-preference) {
   html:has(.scene-nav a[href^="#"]:focus,.footer-return[href^="#"]:focus) { scroll-behavior:smooth }
-  .social-hero { position:relative; isolation:isolate }
-  :is(.scene-bound,.social-hero)::before,:is(.scene-bound,.social-hero)::after {
+  .scene-bound::before,.scene-bound::after {
     content:""; position:absolute; z-index:9; inset:0 0 auto; height:42%; background:#121714;
     pointer-events:none; transform:scaleY(0); transform-origin:top; animation:open-shutter .82s cubic-bezier(.22,.7,.16,1) backwards
   }
-  :is(.scene-bound,.social-hero)::after { inset:auto 0 0; transform-origin:bottom }
-  .room-hero > img { animation:reveal-photo .8s cubic-bezier(.18,.7,.2,1) backwards }
-  .street-name,.room-heading h1 { animation:reveal-type .58s ease-out .16s backwards }
-  .street-name i,.room-english,.scene-nav,.interior-header .bar { animation:reveal-type .5s ease-out .27s backwards }
-  .walk-in,.street-strip,.room-nav,.social-accounts,.campaign-posters { animation:reveal-type .48s ease-out .38s backwards }
+  .scene-bound::after { inset:auto 0 0; transform-origin:bottom }
+  .street-name { animation:reveal-type .58s ease-out .16s backwards }
+  .street-name i,.scene-nav { animation:reveal-type .5s ease-out .27s backwards }
+  .walk-in,.street-strip,.social-accounts,.campaign-posters { animation:reveal-type .48s ease-out .38s backwards }
   .reveal-in { animation:reveal-type .52s ease-out backwards }
   :is(.story-copy,.case-copy,.profile-bio,.footer-wechat).reveal-in { animation-delay:.11s }
   :is(.profile-story figure,.story-media,.case-art,.campaign-stills,.film-strip).reveal-in { animation:reveal-photo .62s cubic-bezier(.2,.7,.2,1) backwards }

@@ -28,9 +28,6 @@ function setupStreet(street) {
   let ignoreClick = false;
   let frame = 0;
   let onscreen = true;
-  let entering = null;
-  let transition = null;
-  let roomStill = null;
   let paintWidth = 0, paintHeight = 0;
   let aimX = 0, aimY = 0, panX = 0, panY = 0;
   let restTimer;
@@ -46,7 +43,7 @@ function setupStreet(street) {
     paintWidth = scene.clientWidth;
     paintHeight = scene.clientHeight;
     if (!portrait.matches) {
-      // Work inside the camera, before parallax or the entry animation is applied.
+      // Measure in street coordinates so the pointer parallax does not move the route.
       const crop = new DOMMatrixReadOnly(getComputedStyle(photoFrame).transform);
       const photoLeft = photoFrame.offsetLeft + crop.e;
       const photoTop = photoFrame.offsetTop + crop.f;
@@ -127,58 +124,16 @@ function setupStreet(street) {
     if (!still && !portrait.matches && (active || panX !== aimX || panY !== aimY)) wake();
   }
   function activate(element) {
-    if (entering || journey || armed) return;
+    if (journey || armed) return;
     active = element?.dataset.door || null;
     wake();
   }
   function resetTrip() {
-    if (transition) transition.cancel();
-    transition = null;
-    if (roomStill) roomStill.remove();
-    roomStill = null;
     clearJourney();
-    if (entering) entering.classList.remove("entering");
-    entering = null; active = null;
-    camera.style.removeProperty("--origin-x");
-    camera.style.removeProperty("--origin-y");
+    ignoreClick = false;
     clearTimeout(restTimer);
     aimX = aimY = panX = panY = 0;
     wake();
-  }
-  function walkTo(link) {
-    if (entering) return;
-    // Save the real street position before zooming a focused door. Some
-    // mobile browsers scroll to keep the transformed focus target visible.
-    try {
-      history.replaceState({...history.state,streetReturnY:window.scrollY},"");
-      history.scrollRestoration = "manual";
-    } catch { /* Sandboxed documents still have normal link navigation. */ }
-    if (reducedMotion.matches || !camera.animate) { location.assign(link.href); return; }
-    entering = link;
-    active = link.dataset.door;
-    entering.classList.add("entering");
-    const room = link.getBoundingClientRect();
-    const view = scene.getBoundingClientRect();
-    const x = (room.left - view.left + room.width * .5) / view.width * 100;
-    const y = (room.top - view.top + room.height * .66) / view.height * 100;
-    camera.style.setProperty("--origin-x", x + "%");
-    camera.style.setProperty("--origin-y", y + "%");
-    roomStill = new Image();
-    roomStill.alt = ""; roomStill.className = "threshold";
-    roomStill.src = "assets/studio-" + active + ".webp";
-    scene.append(roomStill);
-    roomStill.animate([{opacity:0},{opacity:0,offset:.42},{opacity:1}], {duration:680,fill:"forwards"});
-    transition = camera.animate([
-      { transform:getComputedStyle(camera).transform, filter:"brightness(1)" },
-      { transform:"scale(2.65)", filter:"brightness(.65)" }
-    ], {duration:680,easing:"cubic-bezier(.55,.04,.68,.45)",fill:"forwards"});
-    transition.finished.then(() => { if (entering === link) location.assign(link.href); }, () => {});
-    wake();
-  }
-  function enter(event) {
-    if (event.defaultPrevented || event.button !== 0 || event.ctrlKey || event.metaKey || event.shiftKey || event.altKey) return;
-    event.preventDefault();
-    walkTo(event.currentTarget);
   }
   function clearJourney() {
     const pointer = journey?.pointer;
@@ -186,7 +141,7 @@ function setupStreet(street) {
     if (pointer != null && handle.hasPointerCapture(pointer)) handle.releasePointerCapture(pointer);
     handle.setAttribute("aria-pressed","false");
     doors.forEach(door => door.classList.remove("aimed"));
-    if (!entering) active = null;
+    active = null;
     camera.style.removeProperty("--origin-x"); camera.style.removeProperty("--origin-y");
     wake();
   }
@@ -202,7 +157,7 @@ function setupStreet(street) {
   /* The fork is both a touch control and a keyboard selector. Snap the
      gesture to the closest actual path using direction and distance. */
   handle.addEventListener("pointerdown",event=>{
-    if (entering || event.button !== 0 || !event.isPrimary) return;
+    if (event.button !== 0 || !event.isPrimary) return;
     ignoreClick = false;
     journey = {pointer:event.pointerId,x:event.clientX,y:event.clientY,dragged:false};
     handle.setPointerCapture(event.pointerId);
@@ -241,14 +196,20 @@ function setupStreet(street) {
     journey = null;
     if (!dragged) return;
     ignoreClick = true;
-    if (target) walkTo(target); else clearJourney();
+    clearJourney();
+    target?.click();
   });
   for (const type of ["pointercancel","lostpointercapture"]) {
     handle.addEventListener(type,()=>{if(journey)clearJourney();});
   }
   handle.addEventListener("click",()=>{
-    if (ignoreClick || entering) { ignoreClick=false; return; }
-    if (armed) {walkTo(doors.find(door=>door.dataset.door===active) || doors[0]);return;}
+    if (ignoreClick) { ignoreClick=false; return; }
+    if (armed) {
+      const door = doors.find(door=>door.dataset.door===active) || doors[0];
+      clearJourney();
+      door.click();
+      return;
+    }
     armed=true; handle.setAttribute("aria-pressed","true"); selectPath(doors[0]);
     routeStatus.textContent="已选建站开发，可用左右方向键换门，回车进入。";
   });
@@ -259,7 +220,7 @@ function setupStreet(street) {
     const current=doors.findIndex(door=>door.dataset.door===active);
     selectPath(doors[(current+(event.key==="ArrowRight"?1:-1)+doors.length)%doors.length]);
   });
-  handle.addEventListener("blur",()=>{if(!entering)clearJourney();});
+  handle.addEventListener("blur",clearJourney);
   handle.hidden = false;
   for (const door of doors) {
     if (door.dataset.door === "social") door.setAttribute("aria-describedby","preview-keys");
@@ -267,10 +228,9 @@ function setupStreet(street) {
     door.addEventListener("pointerleave", event => { if (event.pointerType !== "touch") activate(document.activeElement?.closest("[data-door]")); });
     door.addEventListener("focus", () => activate(door));
     door.addEventListener("blur", () => activate(null));
-    door.addEventListener("click", enter);
   }
   scene.addEventListener("pointermove", event => {
-    if (portrait.matches || !finePointer.matches || event.pointerType !== "mouse" || reducedMotion.matches || entering || journey) return;
+    if (portrait.matches || !finePointer.matches || event.pointerType !== "mouse" || reducedMotion.matches || journey) return;
     const rect = scene.getBoundingClientRect();
     aimX = 1 - 2 * (event.clientX - rect.left) / rect.width;
     aimY = 1 - 2 * (event.clientY - rect.top) / rect.height;
@@ -279,7 +239,6 @@ function setupStreet(street) {
     wake();
   });
   scene.addEventListener("pointerleave", centerCamera);
-  document.addEventListener("keydown",event=>{if (event.key === "Escape" && entering) resetTrip();});
   window.addEventListener("pagehide",resetTrip);
   window.addEventListener("pageshow",event => {
     if (event.persisted) resetTrip();
@@ -759,6 +718,14 @@ function setupPageNavigation() {
     if (!link || link.hasAttribute("download") || (link.target && link.target !== "_self")) return;
     const destination = new URL(link.href);
     if (destination.origin !== location.origin || !destination.pathname.endsWith(".html") || destination.pathname === location.pathname) return;
+    if (link.matches("[data-door]")) {
+      // Remember the street position for Back, then let the anchor navigate immediately.
+      try {
+        history.replaceState({...history.state,streetReturnY:window.scrollY},"");
+        history.scrollRestoration = "manual";
+      } catch { /* Native navigation also works when history is unavailable. */ }
+      return;
+    }
     if (reducedMotion.matches || !document.body.animate) return;
     event.preventDefault();
     if (veil) return;
